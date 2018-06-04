@@ -1,16 +1,16 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <BorlandProject>
 	<Transactions>
-    <Transaction>1899-12-30 00:00:00.000.744,C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Unit1.dfm=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\uMain.dfm</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.722,=C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
     <Transaction>1899-12-30 00:00:00.000.470,=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\lib\log4d\Log4D.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.058,=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\uProgress.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.098,=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\uSetGetDatapump.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.305,=C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.217,C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Project1.dproj=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\VitaminDatapump.dproj</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.205,=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\uSplash.pas</Transaction>
     <Transaction>1899-12-30 00:00:00.000.190,=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\lib\uLib.pas</Transaction>
-    <Transaction>1899-12-30 00:00:00.000.744,C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Unit1.pas=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\uMain.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.098,=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\uSetGetDatapump.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.217,H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\VitaminDatapump.dproj=C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Project1.dproj</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.058,=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\uProgress.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.205,=H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\uSplash.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.722,=C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.744,H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\uMain.pas=C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.305,=C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
+    <Transaction>1899-12-30 00:00:00.000.744,H:\bhlee_dropbox\Dropbox\MyProject\VitaminDatapumpVer1.0\uMain.dfm=C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Unit1.dfm</Transaction>
     <Transaction>1899-12-30 00:00:00.000.115,=C:\Users\vboxbase\Documents\Embarcadero\Studio\Projects\Unit1.pas</Transaction>
   </Transactions>
 </BorlandProject>

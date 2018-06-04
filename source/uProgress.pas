@@ -292,7 +292,7 @@ begin
             except
                on E : Exception do
                begin
-//                  ufProgress(1, 'Target Table에 Data를 이관 합니다.', 40, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
+                  frmMain.fSet_SQLSpool(0, lv_tmpSQL, lv_tmpTable + ': Error - ' + E.Message);
 //                  frmMain.fSet_SQLSpool(0, lv_tmpSQL, '');
                end;
             end;
@@ -316,8 +316,9 @@ begin
          end;
 
          {-- 처리할 Array 보다 작을때.. --}
-         if lv_LoopCnt < lv_EFetchSize then
+         if (lv_LoopCnt < lv_EFetchSize) then
          begin
+            pi_UniConn.TransactionCount;
             lv_UniQry.Execute(lv_LoopCnt);
             pi_UniConn.Commit;
             lv_tmpTotAffect := lv_tmpTotAffect + lv_UniQry.RowsAffected;
@@ -382,11 +383,12 @@ begin
                (LowerCase(lv_tmpColType) = 'date') or
                (LowerCase(lv_tmpColType) = 'time') then
             begin
-               case pi_Flg of
-                  0 : lv_tmpColNm := 'str_to_date(:' + lv_tmpColNm + ', ''%Y-%d-%m %H:%i:%s'')';  // Mysql
-                  1 : lv_tmpColNm := 'to_date(:' + lv_tmpColNm + ', ''yyyy-mm-dd hh24:mi:ss'')';  // Oracle
-               end;
+//               case pi_Flg of
+//                  0 : lv_tmpColNm := 'str_to_date(:' + lv_tmpColNm + ', ''%Y-%d-%m %H:%i:%s'')';  // Mysql
+//                  1 : lv_tmpColNm := 'to_date(:' + lv_tmpColNm + ', ''yyyy-mm-dd hh24:mi:ss'')';  // Oracle
+//               end;
 
+               lv_tmpColNm := ':' + lv_tmpColNm;
             end else
             begin
                lv_tmpColNm := ':' + lv_tmpColNm;

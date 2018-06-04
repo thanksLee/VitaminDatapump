@@ -3846,7 +3846,7 @@ object frmMain: TfrmMain
       object cxSpinEdt_EFetch: TcxSpinEdit
         Left = 380
         Top = 139
-        Properties.MinValue = 1000.000000000000000000
+        Properties.AssignedValues.MinValue = True
         TabOrder = 6
         Value = 1000
         Width = 55
@@ -3877,7 +3877,6 @@ object frmMain: TfrmMain
         'SynEdit_Source')
       Options = [eoAutoIndent, eoDragDropEditing, eoDropFiles, eoEnhanceEndKey, eoGroupUndo, eoShowScrollHint, eoSmartTabDelete, eoSmartTabs, eoTabsToSpaces]
       FontSmoothing = fsmNone
-      ExplicitTop = 142
     end
     object cxSplitter3: TcxSplitter
       Left = 1
@@ -3885,7 +3884,6 @@ object frmMain: TfrmMain
       Width = 539
       Height = 5
       AlignSplitter = salTop
-      ExplicitTop = 322
     end
     object cxGrid_Source: TcxGrid
       Left = 1
@@ -3894,8 +3892,6 @@ object frmMain: TfrmMain
       Height = 200
       Align = alClient
       TabOrder = 3
-      ExplicitTop = 327
-      ExplicitHeight = 231
       object cxGrid_SourceDBTableView1: TcxGridDBTableView
         Navigator.Buttons.CustomButtons = <>
         DataController.DataModeController.GridMode = True

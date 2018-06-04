@@ -50,7 +50,6 @@ object frmProgress: TfrmProgress
       Lines.Strings = (
         'cxRichEd_ProgressLog')
       TabOrder = 2
-      ExplicitTop = 87
       Height = 288
       Width = 421
     end
@@ -60,7 +59,6 @@ object frmProgress: TfrmProgress
       Align = alBottom
       AutoSize = False
       TabOrder = 1
-      ExplicitTop = 52
       Height = 24
       Width = 421
     end
@@ -154,7 +152,6 @@ object frmProgress: TfrmProgress
       AutoSize = False
       TabOrder = 3
       Visible = False
-      ExplicitTop = 374
       Height = 22
       Width = 421
     end

@@ -256,6 +256,7 @@ begin
       {-- 소요시간 계산  --}
       lv_dtTotalStart : TDateTime;
       lv_dtPartStart : TDateTime;
+      lv_tmpStr : String;
    begin
       {-- 소요시간 Start --}
       lv_dtTotalStart := Now;
@@ -287,7 +288,17 @@ begin
                {-- Parameter Array 처리 --}
                for lv_ColLoopCnt := 0 to lv_ColTotCnt - 1 do
                begin
-                  lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsString := pi_ObjSQry.Fields[lv_ColLoopCnt].AsString;
+                  if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftDate) or
+                     (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftDateTime) or
+                     (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftTime) or
+                     (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftTimeStamp)
+                  then
+                  begin
+                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsDateTime := pi_ObjSQry.Fields[lv_ColLoopCnt].AsDateTime;
+                  end else
+                  begin
+                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsString := pi_ObjSQry.Fields[lv_ColLoopCnt].AsString;
+                  end;
                end;
             except
                on E : Exception do
@@ -300,8 +311,16 @@ begin
 
             if lv_LoopCnt = lv_EFetchSize then
             begin
-               lv_UniQry.Execute(lv_LoopCnt);
-               pi_UniConn.Commit;
+               try
+                  lv_UniQry.Execute(lv_LoopCnt);
+                  pi_UniConn.Commit;
+               except
+                  on E : Exception do
+                  begin
+                     frmMain.fSet_SQLSpool(0, lv_tmpSQL, lv_tmpTable + ': Error - ' + E.Message);
+                     pi_UniConn.Rollback;
+                  end;
+               end;
 
                lv_LoopCnt := 0;  {-- 처리할 건수 초기화 --}
                lv_tmpTotAffect := lv_tmpTotAffect + lv_UniQry.RowsAffected;
@@ -318,9 +337,16 @@ begin
          {-- 처리할 Array 보다 작을때.. --}
          if (lv_LoopCnt < lv_EFetchSize) then
          begin
-            pi_UniConn.TransactionCount;
-            lv_UniQry.Execute(lv_LoopCnt);
-            pi_UniConn.Commit;
+            try
+               lv_UniQry.Execute(lv_LoopCnt);
+               pi_UniConn.Commit;
+            except
+               on E : Exception do
+               begin
+                  frmMain.fSet_SQLSpool(0, lv_tmpSQL, lv_tmpTable + ': Error - ' + E.Message);
+                  pi_UniConn.Rollback;
+               end;
+            end;
             lv_tmpTotAffect := lv_tmpTotAffect + lv_UniQry.RowsAffected;
             lv_Elapsed      := ' - Elapsed Time : ' + ufQueryElapsedTime(0, lv_dtPartStart, Now);
 

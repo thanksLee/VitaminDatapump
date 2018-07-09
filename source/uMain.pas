@@ -378,12 +378,12 @@ begin
       0 :
          begin
             lv_tmpProviderNm := 'MySQL';
-            lv_tmpSectionNm  := 'MYSQL_SDBCONINFO';
+            lv_tmpSectionNm  := 'MYSQL_SDBCONINFO' + ' - ' + cxTextEd_SourceDBID.Text;
          end;
       1 :
          begin
             lv_tmpProviderNm := 'Oracle';
-            lv_tmpSectionNm  := 'ORACLE_SDBCONINFO';
+            lv_tmpSectionNm  := 'ORACLE_SDBCONINFO' + ' - ' + cxTextEd_SourceDBID.Text;
          end;
    end;
    lv_UniQry := TUniQuery.Create(nil);
@@ -459,12 +459,12 @@ begin
       0 :
          begin
             lv_tmpProviderNm := 'MySQL';
-            lv_tmpSectionNm  := 'MYSQL_TDBCONINFO';
+            lv_tmpSectionNm  := 'MYSQL_TDBCONINFO' + ' - ' + cxTextEd_TargetDBID.Text;
          end;
       1 :
          begin
             lv_tmpProviderNm := 'Oracle';
-            lv_tmpSectionNm  := 'ORACLE_TDBCONINFO';
+            lv_tmpSectionNm  := 'ORACLE_TDBCONINFO' + ' - ' + cxTextEd_TargetDBID.Text;
          end;
    end;
    lv_UniQry := TUniQuery.Create(nil);
@@ -1286,25 +1286,31 @@ end;
 procedure TfrmMain.cxCmb_SourceSaveDBTypePropertiesEditValueChanged(
   Sender: TObject);
 var
-   lv_tmpStr : String;
+   lv_tmpStr, lv_tmpUserId, lv_tmpSectionNm : String;
 begin
    lv_tmpStr := cxCmb_SourceSaveDBType.Text;
+   lv_tmpUserId := Trim(Copy(lv_tmpStr, Pos(':', lv_tmpStr) + 1, Length(lv_tmpStr)));
+
    if Pos('Source - MySQL', lv_tmpStr) > 0 then
    begin
-      cxCmb_SourceDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, 'MYSQL_SDBCONINFO', 'DBTYPE', '');
-      cxTextEd_SourceDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, 'MYSQL_SDBCONINFO', 'HOST', ''), _MY_KEY);
-      cxTextEd_SourceDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, 'MYSQL_SDBCONINFO', 'PORT', '');
-      cxTextEd_SourceDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, 'MYSQL_SDBCONINFO', 'USERID', '');
-      cxTextEd_SourcePWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, 'MYSQL_SDBCONINFO', 'USERPWD', ''), _MY_KEY);
+      lv_tmpSectionNm := 'MYSQL_SDBCONINFO' + ' - ' + lv_tmpUserId;
+
+      cxCmb_SourceDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DBTYPE', '');
+      cxTextEd_SourceDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'HOST', ''), _MY_KEY);
+      cxTextEd_SourceDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'PORT', '');
+      cxTextEd_SourceDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERID', '');
+      cxTextEd_SourcePWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
    end else if Pos('Source - Oracle', lv_tmpStr) > 0 then
    begin
-      cxCmb_SourceDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_SDBCONINFO', 'DBTYPE', '');
-      cxTextEd_SourceDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_SDBCONINFO', 'HOST', ''), _MY_KEY);
-      cxTextEd_SourceDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_SDBCONINFO', 'PORT', '');
-      cxTextEd_SourceDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_SDBCONINFO', 'USERID', '');
-      cxTextEd_SourcePWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_SDBCONINFO', 'USERPWD', ''), _MY_KEY);
-      cxTextEd_SourceServiceNm.Text := ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_SDBCONINFO', 'SERVICE', '');
-      cxCmb_SourceConnString.Text   := ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_SDBCONINFO', 'AUTH', '');
+      lv_tmpSectionNm := 'ORACLE_SDBCONINFO' + ' - ' + lv_tmpUserId;
+
+      cxCmb_SourceDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DBTYPE', '');
+      cxTextEd_SourceDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'HOST', ''), _MY_KEY);
+      cxTextEd_SourceDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'PORT', '');
+      cxTextEd_SourceDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERID', '');
+      cxTextEd_SourcePWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
+      cxTextEd_SourceServiceNm.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'SERVICE', '');
+      cxCmb_SourceConnString.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'AUTH', '');
    end;
 end;
 
@@ -1352,25 +1358,31 @@ end;
 procedure TfrmMain.cxCmb_TargetSaveDBTypePropertiesEditValueChanged(
   Sender: TObject);
 var
-   lv_tmpStr : String;
+   lv_tmpStr, lv_tmpUserId, lv_tmpSectionNm : String;
 begin
    lv_tmpStr := cxCmb_TargetSaveDBType.Text;
+   lv_tmpUserId := Trim(Copy(lv_tmpStr, Pos(':', lv_tmpStr) + 1, Length(lv_tmpStr)));
+
    if Pos('Target - MySQL', lv_tmpStr) > 0 then
    begin
-      cxCmb_TargetDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, 'MYSQL_TDBCONINFO', 'DBTYPE', '');
-      cxTextEd_TargetDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, 'MYSQL_TDBCONINFO', 'HOST', ''), _MY_KEY);
-      cxTextEd_TargetDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, 'MYSQL_TDBCONINFO', 'PORT', '');
-      cxTextEd_TargetDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, 'MYSQL_TDBCONINFO', 'USERID', '');
-      cxTextEd_TargetPWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, 'MYSQL_TDBCONINFO', 'USERPWD', ''), _MY_KEY);
+      lv_tmpSectionNm := 'MYSQL_TDBCONINFO' + ' - ' + lv_tmpUserId;
+
+      cxCmb_TargetDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DBTYPE', '');
+      cxTextEd_TargetDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'HOST', ''), _MY_KEY);
+      cxTextEd_TargetDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'PORT', '');
+      cxTextEd_TargetDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERID', '');
+      cxTextEd_TargetPWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
    end else if Pos('Target - Oracle', lv_tmpStr) > 0 then
    begin
-      cxCmb_TargetDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_TDBCONINFO', 'DBTYPE', '');
-      cxTextEd_TargetDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_TDBCONINFO', 'HOST', ''), _MY_KEY);
-      cxTextEd_TargetDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_TDBCONINFO', 'PORT', '');
-      cxTextEd_TargetDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_TDBCONINFO', 'USERID', '');
-      cxTextEd_TargetPWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_TDBCONINFO', 'USERPWD', ''), _MY_KEY);
-      cxTextEd_TargetServiceNm.Text := ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_TDBCONINFO', 'SERVICE', '');
-      cxCmb_TargetConnString.Text   := ufReadINI(getConfigPath + _INIVITAENV, 'ORACLE_TDBCONINFO', 'AUTH', '');
+      lv_tmpSectionNm := 'ORACLE_TDBCONINFO' + ' - ' + lv_tmpUserId;
+
+      cxCmb_TargetDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DBTYPE', '');
+      cxTextEd_TargetDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'HOST', ''), _MY_KEY);
+      cxTextEd_TargetDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'PORT', '');
+      cxTextEd_TargetDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERID', '');
+      cxTextEd_TargetPWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
+      cxTextEd_TargetServiceNm.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'SERVICE', '');
+      cxCmb_TargetConnString.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'AUTH', '');
    end;
 end;
 

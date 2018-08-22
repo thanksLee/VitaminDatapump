@@ -295,6 +295,10 @@ begin
                   then
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsDateTime := pi_ObjSQry.Fields[lv_ColLoopCnt].AsDateTime;
+                  end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftWideMemo)
+                  then
+                  begin
+                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsMemo := pi_ObjSQry.Fields[lv_ColLoopCnt].AsWideString;
                   end else
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsString := pi_ObjSQry.Fields[lv_ColLoopCnt].AsString;

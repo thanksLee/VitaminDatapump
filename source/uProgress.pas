@@ -295,10 +295,15 @@ begin
                   then
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsDateTime := pi_ObjSQry.Fields[lv_ColLoopCnt].AsDateTime;
-                  end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftWideMemo)
+                  end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftWideMemo) or
+                              (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftOraClob)
                   then
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsMemo := pi_ObjSQry.Fields[lv_ColLoopCnt].AsWideString;
+                  end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftOraBlob)
+                  then
+                  begin
+                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsBlob := pi_ObjSQry.Fields[lv_ColLoopCnt].AsBytes;
                   end else
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsString := pi_ObjSQry.Fields[lv_ColLoopCnt].AsString;

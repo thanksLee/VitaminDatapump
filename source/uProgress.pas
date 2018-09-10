@@ -252,7 +252,7 @@ begin
    TThread.CreateAnonymousThread(procedure ()
    var
       lv_UniQry : TUniQuery;
-      lv_LoopCnt, lv_ParamLoopCnt, lv_ColLoopCnt, lv_tmpTotLoop, lv_EFetchSize : Integer;
+      lv_LoopCnt, lv_ParamLoopCnt, lv_ColLoopCnt, lv_tmpTotLoop, lv_EFetchSize, lv_AffectRow : Integer;
       {-- 소요시간 계산  --}
       lv_dtTotalStart : TDateTime;
       lv_dtPartStart : TDateTime;
@@ -273,6 +273,7 @@ begin
          lv_LoopCnt := 0;
          cxPrgbar_SQLCount.Position := 0;
          lv_tmpTotLoop := 0;
+         lv_AffectRow := 0;
          while not pi_ObjSQry.Eof do
          begin
             try
@@ -320,23 +321,26 @@ begin
 
             if lv_LoopCnt = lv_EFetchSize then
             begin
+               lv_AffectRow := 0;
                try
                   lv_UniQry.Execute(lv_LoopCnt);
                   pi_UniConn.Commit;
+                  lv_AffectRow := lv_UniQry.RowsAffected;
                except
                   on E : Exception do
                   begin
+                     lv_AffectRow := -1;
                      frmMain.fSet_SQLSpool(0, lv_tmpSQL, lv_tmpTable + ': Error - ' + E.Message);
                      pi_UniConn.Rollback;
                   end;
                end;
 
                lv_LoopCnt := 0;  {-- 처리할 건수 초기화 --}
-               lv_tmpTotAffect := lv_tmpTotAffect + lv_UniQry.RowsAffected;
+               lv_tmpTotAffect := lv_tmpTotAffect + lv_AffectRow;
                lv_Elapsed      := ' - Elapsed Time : ' + ufQueryElapsedTime(0, lv_dtPartStart, Now);
 
-               ufProgress(1, lv_tmpTable + ' : ' + ufNumberFormat(1, lv_UniQry.RowsAffected) + lv_Elapsed, 50, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
-               frmMain.fSet_SQLSpool(0, lv_tmpSQL, lv_tmpTable + ' : ' + ufNumberFormat(1, lv_UniQry.RowsAffected) + lv_Elapsed);
+               ufProgress(1, lv_tmpTable + ' : ' + ufNumberFormat(1, lv_AffectRow) + lv_Elapsed, 50, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
+               frmMain.fSet_SQLSpool(0, lv_tmpSQL, lv_tmpTable + ' : ' + ufNumberFormat(1, lv_AffectRow) + lv_Elapsed);
             end;
             Inc(lv_tmpTotLoop);
             cxPrgbar_SQLCount.Position := (lv_tmpTotLoop * 100) div lv_tmpRecCnt;

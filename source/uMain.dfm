@@ -4682,6 +4682,7 @@ object frmMain: TfrmMain
     Top = 184
   end
   object UniQry_Target: TUniQuery
+    UniDirectional = True
     Left = 769
     Top = 371
   end

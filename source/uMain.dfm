@@ -3523,6 +3523,14 @@ object frmMain: TfrmMain
       Font.Pitch = fpFixed
       Font.Style = []
       TabOrder = 0
+      CodeFolding.GutterShapeSize = 11
+      CodeFolding.CollapsedLineColor = clGrayText
+      CodeFolding.FolderBarLinesColor = clGrayText
+      CodeFolding.IndentGuidesColor = clGray
+      CodeFolding.IndentGuides = True
+      CodeFolding.ShowCollapsedLine = False
+      CodeFolding.ShowHintMark = True
+      UseCodeFolding = False
       Gutter.Font.Charset = HANGEUL_CHARSET
       Gutter.Font.Color = clWindowText
       Gutter.Font.Height = -11
@@ -3548,6 +3556,14 @@ object frmMain: TfrmMain
       Font.Style = []
       TabOrder = 1
       Visible = False
+      CodeFolding.GutterShapeSize = 11
+      CodeFolding.CollapsedLineColor = clGrayText
+      CodeFolding.FolderBarLinesColor = clGrayText
+      CodeFolding.IndentGuidesColor = clGray
+      CodeFolding.IndentGuides = True
+      CodeFolding.ShowCollapsedLine = False
+      CodeFolding.ShowHintMark = True
+      UseCodeFolding = False
       ExtraLineSpacing = 3
       Gutter.Font.Charset = DEFAULT_CHARSET
       Gutter.Font.Color = clWindowText
@@ -3867,6 +3883,14 @@ object frmMain: TfrmMain
       Font.Style = []
       TabOrder = 1
       OnKeyDown = SynEdit_SourceKeyDown
+      CodeFolding.GutterShapeSize = 11
+      CodeFolding.CollapsedLineColor = clGrayText
+      CodeFolding.FolderBarLinesColor = clGrayText
+      CodeFolding.IndentGuidesColor = clGray
+      CodeFolding.IndentGuides = True
+      CodeFolding.ShowCollapsedLine = False
+      CodeFolding.ShowHintMark = True
+      UseCodeFolding = False
       Gutter.Font.Charset = HANGEUL_CHARSET
       Gutter.Font.Color = clWindowText
       Gutter.Font.Height = -11
@@ -3923,6 +3947,14 @@ object frmMain: TfrmMain
       Font.Style = []
       TabOrder = 4
       Visible = False
+      CodeFolding.GutterShapeSize = 11
+      CodeFolding.CollapsedLineColor = clGrayText
+      CodeFolding.FolderBarLinesColor = clGrayText
+      CodeFolding.IndentGuidesColor = clGray
+      CodeFolding.IndentGuides = True
+      CodeFolding.ShowCollapsedLine = False
+      CodeFolding.ShowHintMark = True
+      UseCodeFolding = False
       Gutter.Font.Charset = DEFAULT_CHARSET
       Gutter.Font.Color = clWindowText
       Gutter.Font.Height = -11
@@ -4225,6 +4257,14 @@ object frmMain: TfrmMain
         Font.Style = []
         TabOrder = 0
         OnKeyDown = SynEdit_TargetKeyDown
+        CodeFolding.GutterShapeSize = 11
+        CodeFolding.CollapsedLineColor = clGrayText
+        CodeFolding.FolderBarLinesColor = clGrayText
+        CodeFolding.IndentGuidesColor = clGray
+        CodeFolding.IndentGuides = True
+        CodeFolding.ShowCollapsedLine = False
+        CodeFolding.ShowHintMark = True
+        UseCodeFolding = False
         Gutter.Font.Charset = HANGEUL_CHARSET
         Gutter.Font.Color = clWindowText
         Gutter.Font.Height = -11
@@ -4286,6 +4326,7 @@ object frmMain: TfrmMain
     Top = 80
   end
   object cxImageList_16: TcxImageList
+    SourceDPI = 96
     FormatVersion = 1
     DesignInfo = 1311273
     ImageInfo = <
@@ -4590,6 +4631,7 @@ object frmMain: TfrmMain
     Top = 262
   end
   object UniQry_Source: TUniQuery
+    UniDirectional = True
     Left = 81
     Top = 387
   end

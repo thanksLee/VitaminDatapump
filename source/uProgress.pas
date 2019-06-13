@@ -25,7 +25,7 @@ uses
   dxSkinValentine, dxSkinVisualStudio2013Blue, dxSkinVisualStudio2013Dark,
   dxSkinVisualStudio2013Light, dxSkinVS2010, dxSkinWhiteprint,
   dxSkinXmas2008Blue, cxProgressBar, cxTextEdit, cxMemo, cxRichEdit, cxLabel,
-  cxGroupBox, Vcl.Menus, cxButtons, MemDS, DBAccess, Uni;
+  cxGroupBox, Vcl.Menus, cxButtons, MemDS, DBAccess, Uni, dxSkinTheBezier;
 
 type
   TfrmProgress = class(TForm)
@@ -113,11 +113,30 @@ begin
       Lines.Add('-------------------------');
    end;
 
+   {*
    pi_ObjDts.DataSet.Last;
 
    lv_TotalRecCnt := pi_ObjDts.DataSet.RecordCount;
 
    pi_ObjDts.DataSet.First;
+   }
+
+
+   lv_LoopCnt := 0;
+   lv_Query := TFDQuery.Create(nil);
+   lv_Query.Connection := pi_ObjDbConn;
+   pi_ObjDbConn.TxOptions.AutoCommit := False;
+
+
+   with lv_Query do
+   begin
+      lv_Query.SQL.Clear;
+      lv_Query.Active := False;
+      lv_Query.SQL.Text := 'select count(1) c_totcnt from ( ' + frmMain.SynEdit_Source.Text + ' ) a';
+      lv_Query.Active := True;
+
+      lv_TotalRecCnt := lv_Query.Fields[0].AsInteger;
+   end;
 
    with cxRichEd_ProgressLog do
    begin
@@ -127,10 +146,7 @@ begin
      Lines.Add('Elapsed Time : ' + ufQueryElapsedTime(0, lv_dtPartStart, Now));
      Lines.Add('-------------------------');
    end;
-   lv_LoopCnt := 0;
-   lv_Query := TFDQuery.Create(nil);
-   lv_Query.Connection := pi_ObjDbConn;
-   pi_ObjDbConn.TxOptions.AutoCommit := False;
+
    pi_ObjDbConn.StartTransaction;
    try
      while not pi_ObjDts.DataSet.Eof do
@@ -220,21 +236,31 @@ var
    lv_tmpOwner, lv_tmpTable, lv_tmpSQL, lv_Elapsed : String;
    lv_ColTotCnt, lv_tmpTotAffect, lv_tmpRecCnt : Integer;
    lv_tmpReVal : TArray<String>;
+
+   lv_UniQry : TUniQuery;
+   lv_LoopCnt, lv_ParamLoopCnt, lv_ColLoopCnt, lv_tmpTotLoop, lv_EFetchSize, lv_AffectRow : Integer;
+   {-- 소요시간 계산  --}
+   lv_dtTotalStart : TDateTime;
+   lv_dtPartStart : TDateTime;
+   lv_tmpStr : String;
 begin
 
    SetLength(lv_tmpReVal, 3);
    lv_tmpTotAffect := 0;
 
-   ufProgress(1, '이관할 데이터 전체 개수를 읽어 오고 있습니다.', 10, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
-   Application.ProcessMessages;
+//   ufProgress(1, '이관할 데이터 전체 개수를 읽어 오고 있습니다.', 10, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
+//   Application.ProcessMessages;
 
-   pi_ObjSQry.Last;  {-- Thread 안에다 넣으면 오류가 발생 --}
-   lv_tmpRecCnt    := pi_ObjSQry.RecordCount;
+   //pi_ObjSQry.Last;  {-- Thread 안에다 넣으면 오류가 발생 --}
+   //lv_tmpRecCnt    := pi_ObjSQry.RecordCount;
 
-   ufProgress(1, ufNumberFormat(1, lv_tmpRecCnt) + ' 건을 읽어왔습니다.', 20, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
-   frmMain.fSet_SQLSpool(0, ufNumberFormat(1, lv_tmpRecCnt), '');
+   //* 2019-06-13
 
-   ufProgress(1, 'Target Table의 Insert 문장을 만듭니다.', 30, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
+
+//   ufProgress(1, ufNumberFormat(1, lv_tmpRecCnt) + ' 건을 읽어왔습니다.', 20, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
+//   frmMain.fSet_SQLSpool(0, ufNumberFormat(1, lv_tmpRecCnt), '');
+
+   ufProgress(1, 'Target Table의 Insert 문장을 만듭니다.', 10, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
 
    lv_tmpOwner := pi_arryParam[0];
    lv_tmpTable := pi_arryParam[1];
@@ -249,15 +275,15 @@ begin
 
    ufProgress(1, 'Target Table에 Data를 이관 합니다.', 40, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
 
-   TThread.CreateAnonymousThread(procedure ()
-   var
-      lv_UniQry : TUniQuery;
-      lv_LoopCnt, lv_ParamLoopCnt, lv_ColLoopCnt, lv_tmpTotLoop, lv_EFetchSize, lv_AffectRow : Integer;
-      {-- 소요시간 계산  --}
-      lv_dtTotalStart : TDateTime;
-      lv_dtPartStart : TDateTime;
-      lv_tmpStr : String;
-   begin
+//   TThread.CreateAnonymousThread(procedure ()
+//   var
+//      lv_UniQry : TUniQuery;
+//      lv_LoopCnt, lv_ParamLoopCnt, lv_ColLoopCnt, lv_tmpTotLoop, lv_EFetchSize, lv_AffectRow : Integer;
+//      {-- 소요시간 계산  --}
+//      lv_dtTotalStart : TDateTime;
+//      lv_dtPartStart : TDateTime;
+//      lv_tmpStr : String;
+   //begin
       {-- 소요시간 Start --}
       lv_dtTotalStart := Now;
       lv_dtPartStart := Now;
@@ -265,7 +291,31 @@ begin
 
       lv_UniQry := TUniQuery.Create(nil);
       pi_ObjSQry.DisableControls;  {-- 이걸 하지 않으면 속도차이가 너무 난다. --}
+      //pi_ObjSQry.UniDirectional := True;
+      frmMain.cxGrid_SourceDBTableView1.DataController.BeginUpdate;
+      frmMain.UniDts_Source.Enabled := False; // out of memory를 방지하기 위하여
       try
+         //* 2019-06-13
+
+         ufProgress(1, '이관할 데이터 전체 개수를 읽어 오고 있습니다.', 20, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
+         Application.ProcessMessages;
+
+         with lv_UniQry do
+         begin
+            SQL.Clear;
+            Active := False;
+            Connection := frmMain.UniConn_Source;
+
+            SQL.Text := 'select count(1) c_totcnt from ( ' + frmMain.SynEdit_Source.Text + ' ) a';
+            Active := True;
+
+            lv_tmpRecCnt := Fields[0].AsInteger;
+            Active := False;
+         end;
+
+         ufProgress(1, ufNumberFormat(1, lv_tmpRecCnt) + ' 건을 읽어왔습니다.', 30, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
+         frmMain.fSet_SQLSpool(0, ufNumberFormat(1, lv_tmpRecCnt), '');
+
          pi_ObjSQry.First;
          lv_UniQry.Connection := pi_UniConn;
          lv_UniQry.SQL.Text := lv_tmpSQL;
@@ -297,6 +347,7 @@ begin
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsDateTime := pi_ObjSQry.Fields[lv_ColLoopCnt].AsDateTime;
                   end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftWideMemo) or
+                              (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftMemo) or
                               (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftOraClob)
                   then
                   begin
@@ -351,6 +402,7 @@ begin
          if (lv_LoopCnt < lv_EFetchSize) then
          begin
             try
+               lv_UniQry.Params.ValueCount := lv_LoopCnt;
                lv_UniQry.Execute(lv_LoopCnt);
                pi_UniConn.Commit;
             except
@@ -375,10 +427,12 @@ begin
          //Timer_frmClose.Interval := 100;
          Timer_Prgs.Enabled := False;
          cxbtn_close.Enabled := True;
+         frmMain.UniDts_Source.Enabled := True;
+         frmMain.cxGrid_SourceDBTableView1.DataController.EndUpdate;
          pi_ObjSQry.EnableControls;
          pi_UniConn.Commit;
       end;
-   end).Start;
+   //end).Start;
 end;
 
 //****************************************************************************//

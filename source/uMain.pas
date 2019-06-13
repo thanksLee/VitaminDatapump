@@ -3,7 +3,7 @@ unit uMain;
 interface
 
 uses
-  Winapi.Windows, Winapi.Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
+  Windows, Messages, System.SysUtils, System.Variants, System.Classes, Vcl.Graphics,
   Vcl.Controls, Vcl.Forms, Vcl.Dialogs, dxSkinsCore, dxSkinBlack, dxSkinBlue,
   dxSkinBlueprint, dxSkinCaramel, dxSkinCoffee, dxSkinDarkRoom, dxSkinDarkSide,
   dxSkinDevExpressDarkStyle, dxSkinDevExpressStyle, dxSkinFoggy,
@@ -28,7 +28,8 @@ uses
   cxGridCustomView, cxGridCustomTableView, cxGridTableView, cxGridDBTableView,
   cxGrid, MySQLUniProvider, DBAccess, Uni, MemDS, UniProvider, OracleUniProvider
   ,cxImage, cxMemo, cxBlobEdit, Clipbrd, FileCtrl, SynEditHighlighter,
-  SynHighlighterSQL, cxSpinEdit;
+  SynHighlighterSQL, cxSpinEdit, dxSkinTheBezier,
+  cxDataControllerConditionalFormattingRulesManagerDialog, cxImageList;
 
 type
    TDBSQL = record

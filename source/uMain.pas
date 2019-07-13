@@ -29,7 +29,8 @@ uses
   cxGrid, MySQLUniProvider, DBAccess, Uni, MemDS, UniProvider, OracleUniProvider
   ,cxImage, cxMemo, cxBlobEdit, Clipbrd, FileCtrl, SynEditHighlighter,
   SynHighlighterSQL, cxSpinEdit, dxSkinTheBezier,
-  cxDataControllerConditionalFormattingRulesManagerDialog, cxImageList;
+  cxDataControllerConditionalFormattingRulesManagerDialog, cxImageList,
+  SQLServerUniProvider;
 
 type
    TDBSQL = record
@@ -141,6 +142,7 @@ type
     Label10: TLabel;
     cxSpinEdt_SFetch: TcxSpinEdit;
     cxSpinEdt_EFetch: TcxSpinEdit;
+    SQLServerUniProvider1: TSQLServerUniProvider;
     procedure FormCreate(Sender: TObject);
     procedure cxGrd_formatDBTableView1Column1GetDataText(
       Sender: TcxCustomGridTableItem; ARecordIndex: Integer; var AText: string);
@@ -197,6 +199,18 @@ type
     //* 선택한 User의 Table List를 가져온다.
     //****************************************************************************//
     procedure pSet_OracleTableList(pi_Param : String; pi_UniConn : TUniConnection; pi_ObjCmb : TcxComboBox);
+    //****************************************************************************//
+    //* MSSql Database 목록을 가져온다.
+    //****************************************************************************//
+    procedure pGet_MSSQLDatabaseList(pi_UniConn : TUniConnection; pi_ObjCmbBox : TcxComboBox);
+    //****************************************************************************//
+    //* MSSql Database 를 변경한다.
+    //****************************************************************************//
+    procedure pSet_MSSQLChangeDatabase(pi_UniConn : TUniConnection; pi_DBNm : String);
+    //****************************************************************************//
+    //* 선택한 Database의 Table List를 가져온다.
+    //****************************************************************************//
+    procedure pSet_MSSQLTableList(pi_UniConn : TUniConnection; pi_ObjCmb : TcxComboBox);
   public
     { Public declarations }
     //****************************************************************************//
@@ -386,6 +400,11 @@ begin
             lv_tmpProviderNm := 'Oracle';
             lv_tmpSectionNm  := 'ORACLE_SDBCONINFO' + ' - ' + cxTextEd_SourceDBID.Text;
          end;
+      2 :
+         begin
+            lv_tmpProviderNm := 'SQL Server';
+            lv_tmpSectionNm  := 'MSSQL_SDBCONINFO' + ' - ' + cxTextEd_SourceDBID.Text;
+         end;
    end;
    lv_UniQry := TUniQuery.Create(nil);
    try
@@ -427,6 +446,10 @@ begin
                      pGet_OracleUserList(pi_UniDBConn, cxCmb_SourceDB);
                      cxCmb_SourceDB.Text := UpperCase(cxTextEd_SourceDBID.Text);
                   end;
+               2 :
+                  begin
+                     pGet_MSSQLDatabaseList(pi_UniDBConn, cxCmb_SourceDB);
+                  end;
             end;
 
             Timer_frmClose.Enabled := True;
@@ -466,6 +489,11 @@ begin
          begin
             lv_tmpProviderNm := 'Oracle';
             lv_tmpSectionNm  := 'ORACLE_TDBCONINFO' + ' - ' + cxTextEd_TargetDBID.Text;
+         end;
+      2 :
+         begin
+            lv_tmpProviderNm := 'SQL Server';
+            lv_tmpSectionNm  := 'MSSQL_TDBCONINFO' + ' - ' + cxTextEd_TargetDBID.Text;
          end;
    end;
    lv_UniQry := TUniQuery.Create(nil);
@@ -507,6 +535,10 @@ begin
                      ufWriteINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'AUTH',  cxCmb_TargetConnString.Text);
                      pGet_OracleUserList(pi_UniDBConn, cxCmb_TargetDB);
                      cxCmb_TargetDB.Text := UpperCase(cxTextEd_TargetDBID.Text);
+                  end;
+               2 :
+                  begin
+                     pGet_MSSQLDatabaseList(pi_UniDBConn, cxCmb_TargetDB);
                   end;
             end;
 
@@ -808,6 +840,75 @@ begin
       end;
    finally
       FreeAndNil(lv_stlParam);
+      FreeAndNil(lv_UniQry);
+   end;
+end;
+
+//****************************************************************************//
+//* MSSql Database 목록을 가져온다.
+//****************************************************************************//
+procedure TfrmMain.pGet_MSSQLDatabaseList(pi_UniConn : TUniConnection; pi_ObjCmbBox : TcxComboBox);
+var
+   lv_UniQry : TUniQuery;
+begin
+   pi_ObjCmbBox.ItemIndex := -1;
+   (pi_ObjCmbBox.Properties as TcxComboBoxProperties).Items.Clear;
+   lv_UniQry := TUniQuery.Create(nil);
+   (pi_ObjCmbBox.Properties as TcxComboBoxProperties).Items.BeginUpdate;
+   try
+      lv_UniQry.Connection := pi_UniConn;
+      if ufBackGroundUniSQLExec(0, pb_DBSQL[7].rSQLText, pi_UniConn.Name, nil, lv_UniQry) then
+      begin
+         while not lv_UniQry.Eof do
+         begin
+            (pi_ObjCmbBox.Properties as TcxComboBoxProperties).Items.Add(lv_UniQry.Fields[0].asString);
+            lv_UniQry.Next;
+         end;
+      end;
+   finally
+      (pi_ObjCmbBox.Properties as TcxComboBoxProperties).Items.EndUpdate;
+      FreeAndNil(lv_UniQry);
+   end;
+end;
+
+//****************************************************************************//
+//* MSSql Database 를 변경한다.
+//****************************************************************************//
+procedure TfrmMain.pSet_MSSQLChangeDatabase(pi_UniConn : TUniConnection; pi_DBNm : String);
+var
+   lv_UniQry : TUniQuery;
+begin
+   lv_UniQry := TUniQuery.Create(nil);
+   try
+      lv_UniQry.Connection := pi_UniConn;
+      pi_UniConn.Database := pi_DBNm;
+      ufBackGroundUniSQLExec(2, 'USE ' + pi_DBNm, pi_UniConn.Name, nil, lv_UniQry);
+   finally
+      FreeAndNil(lv_UniQry);
+   end;
+end;
+
+//****************************************************************************//
+//* 선택한 Database의 Table List를 가져온다.
+//****************************************************************************//
+procedure TfrmMain.pSet_MSSQLTableList(pi_UniConn : TUniConnection; pi_ObjCmb : TcxComboBox);
+var
+   lv_UniQry : TUniQuery;
+begin
+   pi_ObjCmb.ItemIndex := -1;
+   (pi_ObjCmb.Properties as TcxComboBoxProperties).Items.Clear;
+   lv_UniQry := TUniQuery.Create(nil);
+   try
+      lv_UniQry.Connection := pi_UniConn;
+      if ufBackGroundUniSQLExec(0, pb_DBSQL[8].rSQLText, pi_UniConn.Name, nil, lv_UniQry) then
+      begin
+         while not lv_UniQry.Eof do
+         begin
+            (pi_ObjCmb.Properties as TcxComboBoxProperties).Items.Add(lv_UniQry.Fields[0].asString);
+            lv_UniQry.Next;
+         end;
+      end;
+   finally
       FreeAndNil(lv_UniQry);
    end;
 end;
@@ -1258,6 +1359,11 @@ begin
             begin
                pSet_OracleTableList(cxCmb_SourceDB.Text, UniConn_Source, cxCmb_SourceTable);
             end;
+         2 :
+            begin
+               pSet_MSSQLChangeDatabase(UniConn_Source, cxCmb_SourceDB.Text);
+               pSet_MSSQLTableList(UniConn_Source, cxCmb_SourceTable);
+            end;
       end;
    end;
 end;
@@ -1266,7 +1372,7 @@ procedure TfrmMain.cxCmb_SourceDBTypePropertiesEditValueChanged(
   Sender: TObject);
 begin
    case cxCmb_SourceDBType.ItemIndex of
-      0 :
+      0, 2 :
          begin
             cxCmb_SourceConnString.Visible := False;
             cxTextEd_SourceServiceNm.Visible := False;
@@ -1312,6 +1418,15 @@ begin
       cxTextEd_SourcePWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
       cxTextEd_SourceServiceNm.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'SERVICE', '');
       cxCmb_SourceConnString.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'AUTH', '');
+   end else if Pos('Source - SQL Server', lv_tmpStr) > 0 then
+   begin
+      lv_tmpSectionNm := 'MSSQL_SDBCONINFO' + ' - ' + lv_tmpUserId;
+
+      cxCmb_SourceDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DBTYPE', '');
+      cxTextEd_SourceDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'HOST', ''), _MY_KEY);
+      cxTextEd_SourceDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'PORT', '');
+      cxTextEd_SourceDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERID', '');
+      cxTextEd_SourcePWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
    end;
 end;
 
@@ -1329,6 +1444,11 @@ begin
             begin
                pSet_OracleTableList(cxCmb_TargetDB.Text, UniConn_Target, cxCmb_TargetTable);
             end;
+         2 :
+            begin
+               pSet_MySQLChangeDatabase(UniConn_Target, cxCmb_TargetDB.Text);
+               pSet_MySQLTableList(UniConn_Target, cxCmb_TargetTable);
+            end;
       end;
    end;
 
@@ -1338,7 +1458,7 @@ procedure TfrmMain.cxCmb_TargetDBTypePropertiesEditValueChanged(
   Sender: TObject);
 begin
    case cxCmb_TargetDBType.ItemIndex of
-      0 :
+      0, 2 :
          begin
             cxCmb_TargetConnString.Visible := False;
             cxTextEd_TargetServiceNm.Visible := False;
@@ -1384,6 +1504,15 @@ begin
       cxTextEd_TargetPWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
       cxTextEd_TargetServiceNm.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'SERVICE', '');
       cxCmb_TargetConnString.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'AUTH', '');
+   end else if Pos('Target - MSSQL', lv_tmpStr) > 0 then
+   begin
+      lv_tmpSectionNm := 'MSSQL_TDBCONINFO' + ' - ' + lv_tmpUserId;
+
+      cxCmb_TargetDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DBTYPE', '');
+      cxTextEd_TargetDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'HOST', ''), _MY_KEY);
+      cxTextEd_TargetDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'PORT', '');
+      cxTextEd_TargetDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERID', '');
+      cxTextEd_TargetPWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
    end;
 end;
 

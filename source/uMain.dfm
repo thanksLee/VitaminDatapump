@@ -3821,7 +3821,8 @@ object frmMain: TfrmMain
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           'MySQL'
-          'Oracle')
+          'Oracle'
+          'SQL Server')
         Properties.OnEditValueChanged = cxCmb_SourceDBTypePropertiesEditValueChanged
         TabOrder = 1
         Width = 132
@@ -4006,7 +4007,25 @@ object frmMain: TfrmMain
         '0003=  FROM ALL_TAB_COLUMNS'
         '0004= WHERE OWNER = :owner'
         '0005=   AND TABLE_NAME = :table_name'
-        '0006= ORDER BY COLUMN_ID')
+        '0006= ORDER BY COLUMN_ID'
+        ''
+        '[MSSQL - DATABASE LIST - 007]'
+        'sql_desc='#39'database '#47532#49828#53944#47484' '#44032#51256#50728#45796'.'#39
+        'sql_param_cnt=0'
+        '0001=SELECT NAME FROM SYS.DATABASES'
+        ''
+        '[MSSQL - TABLE LIST - 008]'
+        'sql_desc='#39'Table List'#39
+        'sql_param_cnt=0'
+        '0001=SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES'
+        ''
+        '[MSSQL - TABLE COLUMN LIST - 009]'
+        'sql_desc='#39'Table Column List'#39
+        'sql_param_cnt=0'
+        '0001=SELECT COLUMN_NAME'
+        '0002=     , DATA_TYPE'
+        '0003=  FROM INFORMATION_SCHEMA.COLUMNS'
+        '0004= WHERE TABLE_NAME = :table_name')
       FontSmoothing = fsmNone
     end
     object cxGrd_format: TcxGrid
@@ -4203,7 +4222,8 @@ object frmMain: TfrmMain
         Properties.DropDownListStyle = lsFixedList
         Properties.Items.Strings = (
           'MySQL'
-          'Oracle')
+          'Oracle'
+          'SQL Server')
         Properties.OnEditValueChanged = cxCmb_TargetDBTypePropertiesEditValueChanged
         TabOrder = 1
         Width = 132
@@ -4690,5 +4710,9 @@ object frmMain: TfrmMain
     DataSet = UniQry_Target
     Left = 785
     Top = 426
+  end
+  object SQLServerUniProvider1: TSQLServerUniProvider
+    Left = 128
+    Top = 312
   end
 end

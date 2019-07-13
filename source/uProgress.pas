@@ -540,6 +540,10 @@ begin
          begin
             frmMain.pSet_SourceDBConnProcess(1, frmMain.UniConn_Source);
          end;
+      2 :
+         begin
+            frmMain.pSet_SourceDBConnProcess(2, frmMain.UniConn_Source);
+         end;
       10 :
          begin
             frmMain.pSet_TargetDBConnProcess(0, frmMain.UniConn_Target);
@@ -547,6 +551,10 @@ begin
       11 :
          begin
             frmMain.pSet_TargetDBConnProcess(1, frmMain.UniConn_Target);
+         end;
+      12 :
+         begin
+            frmMain.pSet_TargetDBConnProcess(2, frmMain.UniConn_Target);
          end;
       100 :
          begin

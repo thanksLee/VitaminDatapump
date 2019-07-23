@@ -483,6 +483,11 @@ begin
             lv_tmpColNm   := lv_UniQry.Fields[0].AsString;
             lv_tmpColType := lv_UniQry.Fields[1].AsString;
 
+            if pi_Flg = 1 then  // Oracle
+            begin
+               if lv_tmpColNm = 'COMMENT' then lv_tmpColNm := '"' + lv_tmpColNm + '"';               
+            end;
+
             lv_ColLst_1 := lv_ColLst_1 + lv_tmpColNm + ', ';
 
             if (LowerCase(lv_tmpColType) = 'timestamp') or

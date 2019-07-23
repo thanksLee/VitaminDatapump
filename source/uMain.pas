@@ -800,6 +800,8 @@ begin
    (pi_ObjCmbBox.Properties as TcxComboBoxProperties).Items.BeginUpdate;
    try
       lv_UniQry.Connection := pi_UniConn;
+      ufBackGroundUniSQLExec(2, pb_DBSQL[10].rSQLText, pi_UniConn.Name, nil, lv_UniQry);
+      ufBackGroundUniSQLExec(2, pb_DBSQL[11].rSQLText, pi_UniConn.Name, nil, lv_UniQry);
       if ufBackGroundUniSQLExec(0, pb_DBSQL[3].rSQLText, pi_UniConn.Name, nil, lv_UniQry) then
       begin
          while not lv_UniQry.Eof do

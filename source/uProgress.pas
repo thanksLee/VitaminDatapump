@@ -66,6 +66,7 @@ type
 var
   frmProgress: TfrmProgress;
   pv_Flg : Integer;
+  pv_bStop : Boolean;
 
 implementation
 uses uMain, uLib;
@@ -348,6 +349,7 @@ begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsDateTime := pi_ObjSQry.Fields[lv_ColLoopCnt].AsDateTime;
                   end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftWideMemo) or
                               (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftMemo) or
+                              (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftWideString) or
                               (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftOraClob)
                   then
                   begin
@@ -356,6 +358,15 @@ begin
                   then
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsBlob := pi_ObjSQry.Fields[lv_ColLoopCnt].AsBytes;
+                  end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftInteger) or
+                              (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftSmallint)
+                  then
+                  begin
+                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsInteger := pi_ObjSQry.Fields[lv_ColLoopCnt].AsInteger;
+//                  end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftWideString)
+//                  then
+//                  begin
+//                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsWideString := pi_ObjSQry.Fields[lv_ColLoopCnt].AsWideString;
                   end else
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsString := pi_ObjSQry.Fields[lv_ColLoopCnt].AsString;
@@ -395,6 +406,9 @@ begin
             end;
             Inc(lv_tmpTotLoop);
             cxPrgbar_SQLCount.Position := (lv_tmpTotLoop * 100) div lv_tmpRecCnt;
+
+            if pv_bStop = True then Break;
+
             pi_ObjSQry.Next;
          end;
 
@@ -516,6 +530,7 @@ end;
 
 procedure TfrmProgress.cxbtn_closeClick(Sender: TObject);
 begin
+   pv_bStop := True;
    Close;
 end;
 
@@ -589,6 +604,7 @@ end;
 
 procedure TfrmProgress.FormCreate(Sender: TObject);
 begin
+   pv_bStop := False;
    cxRichEd_ProgressLog.Clear;
    cxPgBar_Progress.Position := 0;
 end;

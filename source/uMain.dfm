@@ -4025,7 +4025,19 @@ object frmMain: TfrmMain
         '0001=SELECT COLUMN_NAME'
         '0002=     , DATA_TYPE'
         '0003=  FROM INFORMATION_SCHEMA.COLUMNS'
-        '0004= WHERE TABLE_NAME = :table_name')
+        '0004= WHERE TABLE_NAME = :table_name'
+        ''
+        '[ORACLE - NLS_DATE_FORMAT - 010]'
+        'sql_desc='#39'Session NLS_DATE_FORMAT'#39
+        'sql_param_cnt=0'
+        '0001=ALTER SESSION SET NLS_DATE_FORMAT='#39'YYYY-MM-DD HH24:MI:SS'#39
+        ''
+        '[ORACLE - NLS_TIMESTAMP_FORMAT - 011]'
+        'sql_desc='#39'Session NLS_TIMESTAMP_FORMAT'#39
+        'sql_param_cnt=0'
+        
+          '0001=ALTER SESSION SET NLS_TIMESTAMP_FORMAT='#39'YYYY-MM-DD HH24:MI:' +
+          'SS.FFX'#39)
       FontSmoothing = fsmNone
     end
     object cxGrd_format: TcxGrid

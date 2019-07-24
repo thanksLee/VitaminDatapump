@@ -80,12 +80,24 @@ uses uMain, uLib;
 //* 실행 과정을 보여 준다.
 //****************************************************************************//
 procedure TfrmProgress.ufProgress(pi_Flg : Integer; pi_Msg : String; pi_PrgsPercent : Integer; pi_Objlabel : TcxLabel; pi_ObjPrgs : TcxProgressBar; pi_ObjRichEdit : TcxRichEdit);
+var
+   lv_LineTotCnt : Integer;
+   lv_tmpStr : String;
 begin
    if pi_Flg = 0 then pi_Objlabel.Caption := pi_Msg;
    pi_ObjPrgs.Position := pi_PrgsPercent;
+   //lv_LineTotCnt := pi_ObjRichEdit.Lines.Count;
    pi_ObjRichEdit.Lines.BeginUpdate;
    try
-      pi_ObjRichEdit.Lines.Add(pi_Msg);
+      if pi_Flg = 10 then
+      begin
+         //pi_ObjRichEdit.Lines.Strings[lv_LineTotCnt] := pi_Msg;
+         //lv_tmpStr := pi_ObjRichEdit.Text;
+         pi_ObjRichEdit.Text := pi_Msg;
+      end else
+      begin
+         pi_ObjRichEdit.Lines.Add(pi_Msg);
+      end;
    finally
       pi_ObjRichEdit.Lines.EndUpdate;
       Application.ProcessMessages;
@@ -235,7 +247,7 @@ end;
 procedure TfrmProgress.pSet_SQLPorcess(pi_Flg : Integer; pi_arryParam : TArray<String>; pi_ObjSQry : TUniQuery; pi_UniConn : TUniConnection);
 var
    lv_tmpOwner, lv_tmpTable, lv_tmpSQL, lv_Elapsed : String;
-   lv_ColTotCnt, lv_tmpTotAffect, lv_tmpRecCnt : Integer;
+   lv_ColTotCnt, lv_tmpTotAffect, lv_tmpRecCnt, lv_CommitCnt : Integer;
    lv_tmpReVal : TArray<String>;
 
    lv_UniQry : TUniQuery;
@@ -244,10 +256,15 @@ var
    lv_dtTotalStart : TDateTime;
    lv_dtPartStart : TDateTime;
    lv_tmpStr : String;
+
+   lv_TotCntCheck : Boolean;
 begin
 
    SetLength(lv_tmpReVal, 3);
    lv_tmpTotAffect := 0;
+
+   lv_TotCntCheck := frmMain.chkTotCnt_Without.Checked;
+   lv_tmpRecCnt   := 0;
 
 //   ufProgress(1, '이관할 데이터 전체 개수를 읽어 오고 있습니다.', 10, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
 //   Application.ProcessMessages;
@@ -301,30 +318,40 @@ begin
          ufProgress(1, '이관할 데이터 전체 개수를 읽어 오고 있습니다.', 20, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
          Application.ProcessMessages;
 
-         with lv_UniQry do
+         {--
+            2019.07.24
+            - 대용량의 테이블 조회시 count 시간이 너무 오래 걸림
+              따라서 제외하고 할수 있도록 조치
+          --}
+         if lv_TotCntCheck = False then
          begin
-            SQL.Clear;
-            Active := False;
-            Connection := frmMain.UniConn_Source;
+            with lv_UniQry do
+            begin
+               SQL.Clear;
+               Active := False;
+               Connection := frmMain.UniConn_Source;
 
-            SQL.Text := 'select count(1) c_totcnt from ( ' + frmMain.SynEdit_Source.Text + ' ) a';
-            Active := True;
+               SQL.Text := 'select count(1) c_totcnt from ( ' + frmMain.SynEdit_Source.Text + ' ) a';
+               Active := True;
 
-            lv_tmpRecCnt := Fields[0].AsInteger;
-            Active := False;
+               lv_tmpRecCnt := Fields[0].AsInteger;
+               Active := False;
+            end;
+
+            ufProgress(1, ufNumberFormat(1, lv_tmpRecCnt) + ' 건을 읽어왔습니다.', 30, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
+            frmMain.fSet_SQLSpool(0, ufNumberFormat(1, lv_tmpRecCnt), '');
          end;
-
-         ufProgress(1, ufNumberFormat(1, lv_tmpRecCnt) + ' 건을 읽어왔습니다.', 30, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
-         frmMain.fSet_SQLSpool(0, ufNumberFormat(1, lv_tmpRecCnt), '');
 
          pi_ObjSQry.First;
          lv_UniQry.Connection := pi_UniConn;
          lv_UniQry.SQL.Text := lv_tmpSQL;
+         lv_UniQry.UniDirectional := True;
 
          lv_LoopCnt := 0;
          cxPrgbar_SQLCount.Position := 0;
          lv_tmpTotLoop := 0;
          lv_AffectRow := 0;
+         lv_CommitCnt := 0;
          while not pi_ObjSQry.Eof do
          begin
             try
@@ -388,12 +415,17 @@ begin
                   lv_UniQry.Execute(lv_LoopCnt);
                   pi_UniConn.Commit;
                   lv_AffectRow := lv_UniQry.RowsAffected;
+                  Inc(lv_CommitCnt);
                except
                   on E : Exception do
                   begin
                      lv_AffectRow := -1;
                      frmMain.fSet_SQLSpool(0, lv_tmpSQL, lv_tmpTable + ': Error - ' + E.Message);
                      pi_UniConn.Rollback;
+                     {--
+                        Exception 시 루프 종료
+                       --}
+                     Break;
                   end;
                end;
 
@@ -401,19 +433,30 @@ begin
                lv_tmpTotAffect := lv_tmpTotAffect + lv_AffectRow;
                lv_Elapsed      := ' - Elapsed Time : ' + ufQueryElapsedTime(0, lv_dtPartStart, Now);
 
-               ufProgress(1, lv_tmpTable + ' : ' + ufNumberFormat(1, lv_AffectRow) + lv_Elapsed, 50, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
-               frmMain.fSet_SQLSpool(0, lv_tmpSQL, lv_tmpTable + ' : ' + ufNumberFormat(1, lv_AffectRow) + lv_Elapsed);
+               if lv_TotCntCheck = False then
+               begin
+                  ufProgress(1, lv_tmpTable + ' : ' + ufNumberFormat(1, lv_AffectRow) + lv_Elapsed, 50, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
+                  frmMain.fSet_SQLSpool(0, lv_tmpSQL, lv_tmpTable + ' : ' + ufNumberFormat(1, lv_AffectRow) + lv_Elapsed);
+               end else
+               begin
+                  ufProgress(10, lv_tmpTable + ' - Commit : ' + ufNumberFormat(1, lv_CommitCnt) + ' : ' + ufNumberFormat(1, lv_tmpTotAffect) + lv_Elapsed, 50, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
+                  frmMain.fSet_SQLSpool(0, lv_tmpSQL, lv_tmpTable + ' - Commit : ' + ufNumberFormat(1, lv_CommitCnt) + ' : ' + ufNumberFormat(1, lv_tmpTotAffect) + lv_Elapsed);
+               end;
+
+               if pv_bStop = True then Break;
             end;
             Inc(lv_tmpTotLoop);
-            cxPrgbar_SQLCount.Position := (lv_tmpTotLoop * 100) div lv_tmpRecCnt;
 
-            if pv_bStop = True then Break;
+            if lv_TotCntCheck = False then
+            begin
+               cxPrgbar_SQLCount.Position := (lv_tmpTotLoop * 100) div lv_tmpRecCnt;
+            end;
 
             pi_ObjSQry.Next;
          end;
 
          {-- 처리할 Array 보다 작을때.. --}
-         if (lv_LoopCnt < lv_EFetchSize) then
+         if (lv_LoopCnt < lv_EFetchSize) and (lv_LoopCnt > 0) then
          begin
             try
                lv_UniQry.Params.ValueCount := lv_LoopCnt;

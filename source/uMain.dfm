@@ -3673,16 +3673,16 @@ object frmMain: TfrmMain
       object Label9: TLabel
         Left = 10
         Top = 143
-        Width = 114
+        Width = 84
         Height = 12
-        Caption = 'Select Fetch Size :'
+        Caption = 'Select Fetch :'
       end
       object Label10: TLabel
-        Left = 254
+        Left = 173
         Top = 143
-        Width = 120
+        Width = 90
         Height = 12
-        Caption = 'Execute Fetch Size :'
+        Caption = 'Execute Fetch :'
       end
       object pnl_Source: TPanel
         Left = 3
@@ -3755,10 +3755,10 @@ object frmMain: TfrmMain
           Top = 57
           TabOrder = 7
           Text = 'cxCmb_SourceTable'
-          Width = 111
+          Width = 146
         end
         object cxBtn_SourceDBRefresh: TcxButton
-          Left = 292
+          Left = 329
           Top = 56
           Width = 31
           Height = 25
@@ -3767,7 +3767,7 @@ object frmMain: TfrmMain
           TabOrder = 8
         end
         object cxBtn_SourceSQLRun: TcxButton
-          Left = 324
+          Left = 361
           Top = 56
           Width = 31
           Height = 25
@@ -3789,7 +3789,7 @@ object frmMain: TfrmMain
           Width = 129
         end
         object cxBtn_SourceColResize: TcxButton
-          Left = 356
+          Left = 393
           Top = 56
           Width = 29
           Height = 25
@@ -3806,7 +3806,7 @@ object frmMain: TfrmMain
           Width = 88
         end
         object cxBtn_SourceTrans: TcxButton
-          Left = 388
+          Left = 425
           Top = 56
           Width = 29
           Height = 25
@@ -3853,7 +3853,7 @@ object frmMain: TfrmMain
         TabOrder = 3
       end
       object cxSpinEdt_SFetch: TcxSpinEdit
-        Left = 128
+        Left = 100
         Top = 139
         Properties.MinValue = 100.000000000000000000
         TabOrder = 5
@@ -3861,12 +3861,22 @@ object frmMain: TfrmMain
         Width = 65
       end
       object cxSpinEdt_EFetch: TcxSpinEdit
-        Left = 380
+        Left = 271
         Top = 139
         Properties.AssignedValues.MinValue = True
         TabOrder = 6
-        Value = 1000
+        Value = 3000
         Width = 55
+      end
+      object chkTotCnt_Without: TCheckBox
+        Left = 338
+        Top = 141
+        Width = 103
+        Height = 17
+        Caption = #51204#51228' '#44148#49688' '#51228#50808
+        Checked = True
+        State = cbChecked
+        TabOrder = 7
       end
     end
     object SynEdit_Source: TSynEdit
@@ -4177,10 +4187,10 @@ object frmMain: TfrmMain
           Top = 58
           TabOrder = 7
           Text = 'cxCmb_SourceTable'
-          Width = 111
+          Width = 178
         end
         object cxBtn_TargetDBRefresh: TcxButton
-          Left = 292
+          Left = 359
           Top = 56
           Width = 31
           Height = 25
@@ -4189,7 +4199,7 @@ object frmMain: TfrmMain
           TabOrder = 8
         end
         object cxBtn_TargetSQLRun: TcxButton
-          Left = 324
+          Left = 391
           Top = 56
           Width = 31
           Height = 25
@@ -4210,7 +4220,7 @@ object frmMain: TfrmMain
           Width = 129
         end
         object cxBtn_TargetColResize: TcxButton
-          Left = 356
+          Left = 423
           Top = 56
           Width = 31
           Height = 25

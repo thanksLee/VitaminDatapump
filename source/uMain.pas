@@ -143,6 +143,7 @@ type
     cxSpinEdt_SFetch: TcxSpinEdit;
     cxSpinEdt_EFetch: TcxSpinEdit;
     SQLServerUniProvider1: TSQLServerUniProvider;
+    chkTotCnt_Without: TCheckBox;
     procedure FormCreate(Sender: TObject);
     procedure cxGrd_formatDBTableView1Column1GetDataText(
       Sender: TcxCustomGridTableItem; ARecordIndex: Integer; var AText: string);

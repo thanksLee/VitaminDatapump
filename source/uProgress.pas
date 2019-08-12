@@ -258,6 +258,9 @@ var
    lv_tmpStr : String;
 
    lv_TotCntCheck : Boolean;
+
+//   lv_strmClob : TMemoryStream;
+//   lv_stlClob  : TStringList;
 begin
 
    SetLength(lv_tmpReVal, 3);
@@ -312,6 +315,9 @@ begin
       //pi_ObjSQry.UniDirectional := True;
       frmMain.cxGrid_SourceDBTableView1.DataController.BeginUpdate;
       frmMain.UniDts_Source.Enabled := False; // out of memory를 방지하기 위하여
+
+//      lv_strmClob := TMemoryStream.Create;
+//      lv_stlClob  := TStringList.Create;
       try
          //* 2019-06-13
 
@@ -380,7 +386,29 @@ begin
                               (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftOraClob)
                   then
                   begin
-                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsMemo := pi_ObjSQry.Fields[lv_ColLoopCnt].AsWideString;
+//                     lv_strmClob.Clear;
+//                     (pi_ObjSQry.Fields[lv_ColLoopCnt] as TMemoField).SaveToStream(lv_strmClob);
+//                     lv_strmClob.Position := 0;
+//                     lv_stlClob.Clear;
+//                     lv_stlClob.LoadFromStream(lv_strmClob, TEncoding.UTF8);
+//
+//                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt]. .LoadFromStream(lv_strmClob, ftOraClob);
+
+
+//                     if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftOraClob) then
+//                     begin
+//                        lv_strmClob.Clear;
+//                        (pi_ObjSQry.Fields[lv_ColLoopCnt] as TBlobField).SaveToStream(lv_strmClob);
+//                        lv_strmClob.Position := 0;
+//                        lv_stlClob.Clear;
+//                        //lv_stlClob.LoadFromStream(lv_strmClob, TEncoding.UTF8);
+//                        lv_stlClob.LoadFromStream(lv_strmClob);
+//                        lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsMemo := lv_stlClob.Text;
+//                     end else begin
+                        lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsMemo := pi_ObjSQry.Fields[lv_ColLoopCnt].AsWideString;
+//                     end;
+
+                     //lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].as
                   end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftOraBlob)
                   then
                   begin
@@ -488,6 +516,8 @@ begin
          frmMain.cxGrid_SourceDBTableView1.DataController.EndUpdate;
          pi_ObjSQry.EnableControls;
          pi_UniConn.Commit;
+//         FreeAndNil(lv_stlClob);
+//         FreeAndNil(lv_strmClob);
       end;
    //end).Start;
 end;
@@ -516,6 +546,7 @@ begin
      case pi_Flg of
          0 : lv_Sql := frmMain.pb_DBSQL[5].rSQLText;  // Mysql
          1 : lv_Sql := frmMain.pb_DBSQL[6].rSQLText;  // Oracle
+         2 : lv_Sql := frmMain.pb_DBSQL[9].rSQLText;  // MS-SQL
       end;
 
       if frmMain.ufBackGroundUniSQLExec(1, lv_Sql, pi_UniConn.Name, lv_stlParam, lv_UniQry) then

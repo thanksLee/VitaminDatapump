@@ -4017,7 +4017,9 @@ object frmMain: TfrmMain
         '0003=  FROM ALL_TAB_COLUMNS'
         '0004= WHERE OWNER = :owner'
         '0005=   AND TABLE_NAME = :table_name'
-        '0006= ORDER BY COLUMN_ID'
+        
+          '0006= ORDER BY CASE WHEN DATA_TYPE IN ('#39'NCLOB'#39', '#39'CLOB'#39', '#39'NBLOB'#39',' +
+          ' '#39'BLOB'#39', '#39'LONG'#39') THEN 99999 ELSE COLUMN_ID END, COLUMN_NAME'
         ''
         '[MSSQL - DATABASE LIST - 007]'
         'sql_desc='#39'database '#47532#49828#53944#47484' '#44032#51256#50728#45796'.'#39

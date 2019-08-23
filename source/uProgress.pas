@@ -413,6 +413,10 @@ begin
                   then
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsBlob := pi_ObjSQry.Fields[lv_ColLoopCnt].AsBytes;
+                  end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftVarBytes)
+                  then
+                  begin
+                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsBytes := pi_ObjSQry.Fields[lv_ColLoopCnt].AsBytes;
                   end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftInteger) or
                               (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftSmallint)
                   then

@@ -3649,11 +3649,14 @@ object frmMain: TfrmMain
       Height = 172
       Width = 539
       object dxBevel1: TdxBevel
-        Left = 3
-        Top = 14
-        Width = 533
+        Left = 2
+        Top = 17
+        Width = 535
         Height = 33
         Align = alTop
+        ExplicitLeft = 3
+        ExplicitTop = 14
+        ExplicitWidth = 533
       end
       object Label1: TLabel
         Left = 10
@@ -3663,12 +3666,14 @@ object frmMain: TfrmMain
         Caption = 'DB :'
       end
       object dxBevel3: TdxBevel
-        Left = 3
-        Top = 134
-        Width = 533
+        Left = 2
+        Top = 141
+        Width = 535
         Height = 29
         Align = alBottom
+        ExplicitLeft = 3
         ExplicitTop = 133
+        ExplicitWidth = 533
       end
       object Label9: TLabel
         Left = 10
@@ -3685,9 +3690,9 @@ object frmMain: TfrmMain
         Caption = 'Execute Fetch :'
       end
       object pnl_Source: TPanel
-        Left = 3
-        Top = 47
-        Width = 533
+        Left = 2
+        Top = 50
+        Width = 535
         Height = 85
         Align = alTop
         BevelInner = bvLowered
@@ -4104,11 +4109,13 @@ object frmMain: TfrmMain
       Height = 141
       Width = 530
       object dxBevel2: TdxBevel
-        Left = 3
-        Top = 14
-        Width = 524
+        Left = 2
+        Top = 17
+        Width = 526
         Height = 33
         Align = alTop
+        ExplicitLeft = 3
+        ExplicitTop = 14
         ExplicitWidth = 533
       end
       object Label5: TLabel
@@ -4119,9 +4126,9 @@ object frmMain: TfrmMain
         Caption = 'DB :'
       end
       object pnl_Target: TPanel
-        Left = 3
-        Top = 47
-        Width = 524
+        Left = 2
+        Top = 50
+        Width = 526
         Height = 85
         Align = alTop
         BevelInner = bvLowered
@@ -4718,13 +4725,6 @@ object frmMain: TfrmMain
     Left = 120
     Top = 352
   end
-  object UniConn_Target: TUniConnection
-    ProviderName = 'Oracle'
-    Port = 1524
-    LoginPrompt = False
-    Left = 776
-    Top = 184
-  end
   object UniQry_Target: TUniQuery
     UniDirectional = True
     Left = 769
@@ -4738,5 +4738,12 @@ object frmMain: TfrmMain
   object SQLServerUniProvider1: TSQLServerUniProvider
     Left = 128
     Top = 312
+  end
+  object UniConn_Target: TUniConnection
+    ProviderName = 'Oracle'
+    Port = 1524
+    LoginPrompt = False
+    Left = 776
+    Top = 184
   end
 end

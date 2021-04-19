@@ -42,8 +42,8 @@ object frmProgress: TfrmProgress
       Transparent = True
     end
     object cxRichEd_ProgressLog: TcxRichEdit
-      Left = 3
-      Top = 64
+      Left = 2
+      Top = 71
       Align = alBottom
       Properties.ScrollBars = ssBoth
       Properties.WordWrap = False
@@ -51,24 +51,24 @@ object frmProgress: TfrmProgress
         'cxRichEd_ProgressLog')
       TabOrder = 2
       Height = 288
-      Width = 421
+      Width = 423
     end
     object cxPgBar_Progress: TcxProgressBar
-      Left = 3
-      Top = 40
+      Left = 2
+      Top = 47
       Align = alBottom
       AutoSize = False
       TabOrder = 1
       Height = 24
-      Width = 421
+      Width = 423
     end
     object cxGroupBox1: TcxGroupBox
-      Left = 3
-      Top = 374
+      Left = 2
+      Top = 381
       Align = alBottom
       TabOrder = 4
       Height = 32
-      Width = 421
+      Width = 423
       object cxbtn_close: TcxButton
         Left = 190
         Top = 4
@@ -175,14 +175,14 @@ object frmProgress: TfrmProgress
       Width = 201
     end
     object cxPrgbar_SQLCount: TcxProgressBar
-      Left = 3
-      Top = 352
+      Left = 2
+      Top = 359
       Align = alBottom
       AutoSize = False
       TabOrder = 3
       Visible = False
       Height = 22
-      Width = 421
+      Width = 423
     end
   end
   object Timer_Prgs: TTimer

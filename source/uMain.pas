@@ -30,7 +30,7 @@ uses
   ,cxImage, cxMemo, cxBlobEdit, Clipbrd, FileCtrl, SynEditHighlighter,
   SynHighlighterSQL, cxSpinEdit, dxSkinTheBezier,
   cxDataControllerConditionalFormattingRulesManagerDialog, cxImageList,
-  SQLServerUniProvider;
+  SQLServerUniProvider, dxDateRanges;
 
 type
    TDBSQL = record
@@ -127,7 +127,6 @@ type
     cxGrid_Target: TcxGrid;
     cxGrid_TargetDBTableView1: TcxGridDBTableView;
     cxGridLevel1: TcxGridLevel;
-    UniConn_Target: TUniConnection;
     UniQry_Target: TUniQuery;
     UniDts_Target: TUniDataSource;
     act_TargetDBConn: TAction;
@@ -144,6 +143,7 @@ type
     cxSpinEdt_EFetch: TcxSpinEdit;
     SQLServerUniProvider1: TSQLServerUniProvider;
     chkTotCnt_Without: TCheckBox;
+    UniConn_Target: TUniConnection;
     procedure FormCreate(Sender: TObject);
     procedure cxGrd_formatDBTableView1Column1GetDataText(
       Sender: TcxCustomGridTableItem; ARecordIndex: Integer; var AText: string);
@@ -591,7 +591,9 @@ begin
                begin
                   Server := pi_DBHost + ':' + pi_DBPort + ':' + pi_ServiceNm;
                   SpecificOptions.Values['Direct'] := 'True';
-                  SpecificOptions.Values['Charset'] := pi_DBCharSet;
+                  // 2021.03.02
+                  // Mysql -> Oracle 이관시 CLOB 한글 깨짐 현상으로 주서 처리함.
+                  //SpecificOptions.Values['Charset'] := pi_DBCharSet;
                   SpecificOptions.Values['UseUnicode'] := 'True';
                end;
          end;

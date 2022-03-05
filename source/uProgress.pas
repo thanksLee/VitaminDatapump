@@ -519,7 +519,13 @@ begin
          frmMain.UniDts_Source.Enabled := True;
          frmMain.cxGrid_SourceDBTableView1.DataController.EndUpdate;
          pi_ObjSQry.EnableControls;
-         pi_UniConn.Commit;
+         try
+            pi_UniConn.Commit;
+         except
+            on E : Exception do
+            begin
+            end;
+         end;
 //         FreeAndNil(lv_stlClob);
 //         FreeAndNil(lv_strmClob);
       end;
@@ -551,6 +557,7 @@ begin
          0 : lv_Sql := frmMain.pb_DBSQL[5].rSQLText;  // Mysql
          1 : lv_Sql := frmMain.pb_DBSQL[6].rSQLText;  // Oracle
          2 : lv_Sql := frmMain.pb_DBSQL[9].rSQLText;  // MS-SQL
+         3 : lv_Sql := frmMain.pb_DBSQL[14].rSQLText;  // Postgresql
       end;
 
       if frmMain.ufBackGroundUniSQLExec(1, lv_Sql, pi_UniConn.Name, lv_stlParam, lv_UniQry) then
@@ -642,6 +649,10 @@ begin
          begin
             frmMain.pSet_SourceDBConnProcess(2, frmMain.UniConn_Source);
          end;
+      3 :
+         begin
+            frmMain.pSet_SourceDBConnProcess(3, frmMain.UniConn_Source);
+         end;
       10 :
          begin
             frmMain.pSet_TargetDBConnProcess(0, frmMain.UniConn_Target);
@@ -653,6 +664,10 @@ begin
       12 :
          begin
             frmMain.pSet_TargetDBConnProcess(2, frmMain.UniConn_Target);
+         end;
+      13 :
+         begin
+            frmMain.pSet_TargetDBConnProcess(3, frmMain.UniConn_Target);
          end;
       100 :
          begin
@@ -667,6 +682,13 @@ begin
             lv_Tmp[0] := frmMain.cxCmb_TargetDB.Text;
             lv_Tmp[1] := frmMain.cxCmb_TargetTable.Text;
             pSet_SQLPorcess(1, lv_Tmp, frmMain.UniQry_Source, frmMain.UniConn_Target);
+         end;
+      103 :
+         begin
+            SetLength(lv_Tmp, 2);
+            lv_Tmp[0] := frmMain.cxCmb_TargetDB.Text;
+            lv_Tmp[1] := frmMain.cxCmb_TargetTable.Text;
+            pSet_SQLPorcess(3, lv_Tmp, frmMain.UniQry_Source, frmMain.UniConn_Target);
          end;
    end;
 //   SetLength(lv_Tmp, 2);

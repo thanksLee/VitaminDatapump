@@ -42,7 +42,62 @@ sql_param_cnt=2
 0003=  FROM ALL_TAB_COLUMNS
 0004= WHERE OWNER = :owner
 0005=   AND TABLE_NAME = :table_name
-0006= ORDER BY COLUMN_ID
+0006= ORDER BY CASE WHEN DATA_TYPE IN ('NCLOB', 'CLOB', 'NBLOB', 'BLOB', 'LONG') THEN 99999 ELSE COLUMN_ID END, COLUMN_NAME
+
+[MSSQL - DATABASE LIST - 007]
+sql_desc='database 리스트를 가져온다.'
+sql_param_cnt=0
+0001=SELECT NAME FROM SYS.DATABASES
+
+[MSSQL - TABLE LIST - 008]
+sql_desc='Table List'
+sql_param_cnt=0
+0001=SELECT TABLE_NAME FROM INFORMATION_SCHEMA.TABLES
+
+[MSSQL - TABLE COLUMN LIST - 009]
+sql_desc='Table Column List'
+sql_param_cnt=0
+0001=SELECT COLUMN_NAME
+0002=     , DATA_TYPE
+0003=  FROM INFORMATION_SCHEMA.COLUMNS
+0004= WHERE TABLE_NAME = :table_name
+
+[ORACLE - NLS_DATE_FORMAT - 010]
+sql_desc='Session NLS_DATE_FORMAT'
+sql_param_cnt=0
+0001=ALTER SESSION SET NLS_DATE_FORMAT='YYYY-MM-DD HH24:MI:SS'
+
+[ORACLE - NLS_TIMESTAMP_FORMAT - 011]
+sql_desc='Session NLS_TIMESTAMP_FORMAT'
+sql_param_cnt=0
+0001=ALTER SESSION SET NLS_TIMESTAMP_FORMAT='YYYY-MM-DD HH24:MI:SS.FFX'
+
+[PG - DATABASE LIST - 012]
+sql_desc='database 리스트를 가져온다.'
+sql_param_cnt=0
+0001=select datname from pg_database
+
+[PG - DATABASE LIST - 013]
+sql_desc='로그인 User의 Table 목록을 가져온다.'
+sql_param_cnt=0
+0001=select tablename from pg_tables
+0002=where tableowner = :table_owner
+0003=order by lower(tablename)
+
+[PG - TABLE COLUMN LIST - 014]
+sql_desc='Table Column List'
+sql_param_cnt=2
+0001=SELECT COLUMN_NAME
+0002=     , DATA_TYPE
+0003=  FROM INFORMATION_SCHEMA.COLUMNS
+0004= WHERE TABLE_CATALOG = :table_catalog
+0005=   AND TABLE_NAME = :table_name
+
+[PG - TABLE COLUMN LIST - 015]
+sql_desc='Autocommit off'
+sql_param_cnt=0
+0001=set AUTOCOMMIT off
+
 
 --=================================================================================================
 

@@ -30,7 +30,7 @@ uses
   ,cxImage, cxMemo, cxBlobEdit, Clipbrd, FileCtrl, SynEditHighlighter,
   SynHighlighterSQL, cxSpinEdit, dxSkinTheBezier,
   cxDataControllerConditionalFormattingRulesManagerDialog, cxImageList,
-  SQLServerUniProvider, dxDateRanges;
+  SQLServerUniProvider, dxDateRanges, PostgreSQLUniProvider;
 
 type
    TDBSQL = record
@@ -144,6 +144,7 @@ type
     SQLServerUniProvider1: TSQLServerUniProvider;
     chkTotCnt_Without: TCheckBox;
     UniConn_Target: TUniConnection;
+    PostgreSQLUniProvider1: TPostgreSQLUniProvider;
     procedure FormCreate(Sender: TObject);
     procedure cxGrd_formatDBTableView1Column1GetDataText(
       Sender: TcxCustomGridTableItem; ARecordIndex: Integer; var AText: string);
@@ -161,7 +162,6 @@ type
     procedure act_SourceColResizeExecute(Sender: TObject);
     procedure cxCmb_SourceDBTypePropertiesEditValueChanged(Sender: TObject);
     procedure cxCmb_SourceSaveDBTypePropertiesEditValueChanged(Sender: TObject);
-    procedure cxCmb_SourceDBPropertiesChange(Sender: TObject);
     procedure cxCmb_TargetDBTypePropertiesEditValueChanged(Sender: TObject);
     procedure cxCmb_TargetSaveDBTypePropertiesEditValueChanged(Sender: TObject);
     procedure act_TargetDBConnExecute(Sender: TObject);
@@ -170,8 +170,9 @@ type
     procedure act_TargetSQLRunExecute(Sender: TObject);
     procedure SynEdit_TargetKeyDown(Sender: TObject; var Key: Word;
       Shift: TShiftState);
-    procedure cxCmb_TargetDBPropertiesChange(Sender: TObject);
     procedure act_SourceTransExecute(Sender: TObject);
+    procedure cxCmb_SourceDBPropertiesEditValueChanged(Sender: TObject);
+    procedure cxCmb_TargetDBPropertiesEditValueChanged(Sender: TObject);
   private
     { Private declarations }
     //****************************************************************************//
@@ -179,7 +180,7 @@ type
     //****************************************************************************//
     procedure pSetDBSQL(pi_ObjSynEd : TSynEdit);
     procedure LoadDBConnInfo(pi_Flg : Integer; pi_ObjCmb : TcxComboBox);
-    function ufSet_DBConnection(pi_Flg : Integer; pi_UniDBConn : TUniConnection; pi_DBProvider, pi_DBNm, pi_DBHost, pi_DBPort, pi_ServiceNm, pi_DBCharSet, pi_DBUserId, pi_DBPwd, pi_UserAuthMode : String) : String;
+    function ufSet_DBConnection(pi_Flg : Integer; pi_UniDBConn : TUniConnection; pi_DBProvider, pi_DBNm, pi_DBHost, pi_DBPort, pi_ServiceNm, pi_DBCharSet, pi_DBUserId, pi_DBPwd, pi_UserAuthMode, pi_DB : String) : String;
     //****************************************************************************//
     //* Mysql Database 목록을 가져온다.
     //****************************************************************************//
@@ -212,6 +213,18 @@ type
     //* 선택한 Database의 Table List를 가져온다.
     //****************************************************************************//
     procedure pSet_MSSQLTableList(pi_UniConn : TUniConnection; pi_ObjCmb : TcxComboBox);
+    //****************************************************************************//
+    //* Postgresql Database 목록을 가져온다.
+    //****************************************************************************//
+    procedure pGet_PGDatabaseList(pi_UniConn : TUniConnection; pi_ObjCmbBox : TcxComboBox);
+    //****************************************************************************//
+    //* 선택한 Database의 Table List를 가져온다.
+    //****************************************************************************//
+    procedure pSet_PGTableList(pi_UniConn : TUniConnection; pi_ObjText : TcxTextEdit; pi_ObjCmb : TcxComboBox);
+    //****************************************************************************//
+    //* Postgresql Autocommit Off
+    //****************************************************************************//
+    procedure pSet_PGAutoCommit(pi_UniConn : TUniConnection);
   public
     { Public declarations }
     //****************************************************************************//
@@ -406,6 +419,11 @@ begin
             lv_tmpProviderNm := 'SQL Server';
             lv_tmpSectionNm  := 'MSSQL_SDBCONINFO' + ' - ' + cxTextEd_SourceDBID.Text;
          end;
+      3 :
+         begin
+            lv_tmpProviderNm := 'PostgreSQL';
+            lv_tmpSectionNm  := 'PG_SDBCONINFO' + ' - ' + cxTextEd_SourceDBID.Text;
+         end;
    end;
    lv_UniQry := TUniQuery.Create(nil);
    try
@@ -422,7 +440,8 @@ begin
                                , 'utf8'
                                , cxTextEd_SourceDBID.Text
                                , cxTextEd_SourcePWD.Text
-                               , cxCmb_SourceConnString.Text) = 'SUCCESS' then
+                               , cxCmb_SourceConnString.Text
+                               , cxCmb_SourceDB.Text) = 'SUCCESS' then
          begin
 //            ufProgress(1, 'Charater Set을 설정합니다.', 60, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
 //            frmMain.pGet_MySQLCharacterSetting(pv_SourceDBConn);
@@ -450,6 +469,12 @@ begin
                2 :
                   begin
                      pGet_MSSQLDatabaseList(pi_UniDBConn, cxCmb_SourceDB);
+                  end;
+               3 :
+                  begin
+                     ufWriteINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DATABASE', cxCmb_SourceDB.Text);
+                     //pSet_PGAutoCommit(pi_UniDBConn);
+                     pGet_PGDatabaseList(pi_UniDBConn, cxCmb_SourceDB);
                   end;
             end;
 
@@ -496,6 +521,11 @@ begin
             lv_tmpProviderNm := 'SQL Server';
             lv_tmpSectionNm  := 'MSSQL_TDBCONINFO' + ' - ' + cxTextEd_TargetDBID.Text;
          end;
+      3 :
+         begin
+            lv_tmpProviderNm := 'PostgreSQL';
+            lv_tmpSectionNm  := 'PG_TDBCONINFO' + ' - ' + cxTextEd_TargetDBID.Text;
+         end;
    end;
    lv_UniQry := TUniQuery.Create(nil);
    try
@@ -512,7 +542,8 @@ begin
                                , 'utf8'
                                , cxTextEd_TargetDBID.Text
                                , cxTextEd_TargetPWD.Text
-                               , cxCmb_TargetConnString.Text) = 'SUCCESS' then
+                               , cxCmb_TargetConnString.Text
+                               , cxCmb_TargetDB.Text) = 'SUCCESS' then
          begin
 //            ufProgress(1, 'Charater Set을 설정합니다.', 60, cxLbl_Elapsed, cxPgBar_Progress, cxRichEd_ProgressLog);
 //            frmMain.pGet_MySQLCharacterSetting(pv_SourceDBConn);
@@ -541,6 +572,12 @@ begin
                   begin
                      pGet_MSSQLDatabaseList(pi_UniDBConn, cxCmb_TargetDB);
                   end;
+               3 :
+                  begin
+                     ufWriteINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DATABASE', cxCmb_TargetDB.Text);
+                     //pSet_PGAutoCommit(pi_UniDBConn);
+                     pGet_PGDatabaseList(pi_UniDBConn, cxCmb_TargetDB);
+                  end;
             end;
 
             Timer_frmClose.Enabled := True;
@@ -562,7 +599,7 @@ begin
    end;
 end;
 
-function TfrmMain.ufSet_DBConnection(pi_Flg : Integer; pi_UniDBConn : TUniConnection; pi_DBProvider, pi_DBNm, pi_DBHost, pi_DBPort, pi_ServiceNm, pi_DBCharSet, pi_DBUserId, pi_DBPwd, pi_UserAuthMode : String) : String;
+function TfrmMain.ufSet_DBConnection(pi_Flg : Integer; pi_UniDBConn : TUniConnection; pi_DBProvider, pi_DBNm, pi_DBHost, pi_DBPort, pi_ServiceNm, pi_DBCharSet, pi_DBUserId, pi_DBPwd, pi_UserAuthMode, pi_DB : String) : String;
 var
    lv_retVal : String;
 begin
@@ -592,15 +629,20 @@ begin
                   Server := pi_DBHost + ':' + pi_DBPort + ':' + pi_ServiceNm;
                   SpecificOptions.Values['Direct'] := 'True';
                   // 2021.03.02
-                  // Mysql -> Oracle 이관시 CLOB 한글 깨짐 현상으로 주서 처리함.
+                  // Mysql -> Oracle 이관시 CLOB 한글 깨짐 현상으로 주석 처리함.
                   //SpecificOptions.Values['Charset'] := pi_DBCharSet;
                   SpecificOptions.Values['UseUnicode'] := 'True';
+               end;
+            3 :
+               begin
+                  Database := pi_DB;
                end;
          end;
 
 
 
          Connected := True;
+         AutoCommit := False;
       end;
    except
       on E : Exception do
@@ -913,6 +955,81 @@ begin
             lv_UniQry.Next;
          end;
       end;
+   finally
+      FreeAndNil(lv_UniQry);
+   end;
+end;
+
+//****************************************************************************//
+//* Postgresql Database 목록을 가져온다.
+//****************************************************************************//
+procedure TfrmMain.pGet_PGDatabaseList(pi_UniConn : TUniConnection; pi_ObjCmbBox : TcxComboBox);
+var
+   lv_UniQry : TUniQuery;
+   lv_DBBk : String;
+begin
+   lv_DBBk := pi_ObjCmbBox.Text;
+   pi_ObjCmbBox.ItemIndex := -1;
+   (pi_ObjCmbBox.Properties as TcxComboBoxProperties).Items.Clear;
+   lv_UniQry := TUniQuery.Create(nil);
+   (pi_ObjCmbBox.Properties as TcxComboBoxProperties).Items.BeginUpdate;
+   try
+      lv_UniQry.Connection := pi_UniConn;
+      if ufBackGroundUniSQLExec(0, pb_DBSQL[12].rSQLText, pi_UniConn.Name, nil, lv_UniQry) then
+      begin
+         while not lv_UniQry.Eof do
+         begin
+            (pi_ObjCmbBox.Properties as TcxComboBoxProperties).Items.Add(lv_UniQry.Fields[0].asString);
+            lv_UniQry.Next;
+         end;
+      end;
+   finally
+      (pi_ObjCmbBox.Properties as TcxComboBoxProperties).Items.EndUpdate;
+      pi_ObjCmbBox.Text := lv_DBBk;
+      FreeAndNil(lv_UniQry);
+   end;
+end;
+
+//****************************************************************************//
+//* 선택한 Database의 Table List를 가져온다.
+//****************************************************************************//
+procedure TfrmMain.pSet_PGTableList(pi_UniConn : TUniConnection; pi_ObjText : TcxTextEdit; pi_ObjCmb : TcxComboBox);
+var
+   lv_UniQry : TUniQuery;
+   lv_stlParam : TStringList;
+begin
+   pi_ObjCmb.ItemIndex := -1;
+   (pi_ObjCmb.Properties as TcxComboBoxProperties).Items.Clear;
+   lv_UniQry := TUniQuery.Create(nil);
+
+   lv_stlParam := TStringList.Create;
+   try
+      lv_stlParam.Add(pi_ObjText.Text);
+      lv_UniQry.Connection := pi_UniConn;
+      if ufBackGroundUniSQLExec(1, pb_DBSQL[13].rSQLText, pi_UniConn.Name, lv_stlParam, lv_UniQry) then
+      begin
+         while not lv_UniQry.Eof do
+         begin
+            (pi_ObjCmb.Properties as TcxComboBoxProperties).Items.Add(lv_UniQry.Fields[0].asString);
+            lv_UniQry.Next;
+         end;
+      end;
+   finally
+      FreeAndNil(lv_stlParam);
+      FreeAndNil(lv_UniQry);
+   end;
+end;
+//****************************************************************************//
+//* Postgresql Autocommit Off
+//****************************************************************************//
+procedure TfrmMain.pSet_PGAutoCommit(pi_UniConn : TUniConnection);
+var
+   lv_UniQry : TUniQuery;
+begin
+   lv_UniQry := TUniQuery.Create(nil);
+   try
+      lv_UniQry.Connection := pi_UniConn;
+      ufBackGroundUniSQLExec(0, pb_DBSQL[15].rSQLText, pi_UniConn.Name, nil, lv_UniQry)
    finally
       FreeAndNil(lv_UniQry);
    end;
@@ -1264,6 +1381,8 @@ begin
       case cxCmb_TargetDBType.ItemIndex of
          0 : cxTxtEd_ProgressTypeFlg.Text := '100'; // MySQL
          1 : cxTxtEd_ProgressTypeFlg.Text := '101'; // Oracle
+         2 : cxTxtEd_ProgressTypeFlg.Text := '102'; // MsSQL
+         3 : cxTxtEd_ProgressTypeFlg.Text := '103'; // Postgresql
       end;
       cxPrgbar_SQLCount.Visible := True;
       ShowModal;
@@ -1350,8 +1469,10 @@ begin
    end;
 end;
 
-procedure TfrmMain.cxCmb_SourceDBPropertiesChange(Sender: TObject);
+procedure TfrmMain.cxCmb_SourceDBPropertiesEditValueChanged(Sender: TObject);
 begin
+   if UniConn_Source.Connected = False then Exit;
+
    if cxCmb_SourceDB.Text <> '' then
    begin
       case cxCmb_SourceDBType.ItemIndex of
@@ -1369,6 +1490,10 @@ begin
                pSet_MSSQLChangeDatabase(UniConn_Source, cxCmb_SourceDB.Text);
                pSet_MSSQLTableList(UniConn_Source, cxCmb_SourceTable);
             end;
+         3 :
+            begin
+               pSet_PGTableList(UniConn_Source, cxTextEd_SourceDBID, cxCmb_SourceTable);
+            end;
       end;
    end;
 end;
@@ -1377,7 +1502,7 @@ procedure TfrmMain.cxCmb_SourceDBTypePropertiesEditValueChanged(
   Sender: TObject);
 begin
    case cxCmb_SourceDBType.ItemIndex of
-      0, 2 :
+      0, 2, 3 :
          begin
             cxCmb_SourceConnString.Visible := False;
             cxTextEd_SourceServiceNm.Visible := False;
@@ -1432,11 +1557,23 @@ begin
       cxTextEd_SourceDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'PORT', '');
       cxTextEd_SourceDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERID', '');
       cxTextEd_SourcePWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
+   end else if Pos('Source - Postgresql', lv_tmpStr) > 0 then
+   begin
+      lv_tmpSectionNm := 'PG_SDBCONINFO' + ' - ' + lv_tmpUserId;
+
+      cxCmb_SourceDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DBTYPE', '');
+      cxTextEd_SourceDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'HOST', ''), _MY_KEY);
+      cxTextEd_SourceDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'PORT', '');
+      cxTextEd_SourceDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERID', '');
+      cxTextEd_SourcePWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
+      cxCmb_SourceDB.Text        := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DATABASE', '');
    end;
 end;
 
-procedure TfrmMain.cxCmb_TargetDBPropertiesChange(Sender: TObject);
+procedure TfrmMain.cxCmb_TargetDBPropertiesEditValueChanged(Sender: TObject);
 begin
+   if UniConn_Target.Connected = False then Exit;
+   
    if cxCmb_TargetDB.Text <> '' then
    begin
       case cxCmb_TargetDBType.ItemIndex of
@@ -1451,8 +1588,12 @@ begin
             end;
          2 :
             begin
-               pSet_MySQLChangeDatabase(UniConn_Target, cxCmb_TargetDB.Text);
-               pSet_MySQLTableList(UniConn_Target, cxCmb_TargetTable);
+               pSet_MSSQLChangeDatabase(UniConn_Target, cxCmb_TargetDB.Text);
+               pSet_MSSQLTableList(UniConn_Target, cxCmb_TargetTable);
+            end;
+         3 :
+            begin
+               pSet_PGTableList(UniConn_Target, cxTextEd_TargetDBID, cxCmb_TargetTable);
             end;
       end;
    end;
@@ -1518,6 +1659,16 @@ begin
       cxTextEd_TargetDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'PORT', '');
       cxTextEd_TargetDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERID', '');
       cxTextEd_TargetPWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
+   end else if Pos('Target - Postgresql', lv_tmpStr) > 0 then
+   begin
+      lv_tmpSectionNm := 'PG_TDBCONINFO' + ' - ' + lv_tmpUserId;
+
+      cxCmb_TargetDBType.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DBTYPE', '');
+      cxTextEd_TargetDBHost.Text := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'HOST', ''), _MY_KEY);
+      cxTextEd_TargetDBPort.Text := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'PORT', '');
+      cxTextEd_TargetDBID.Text   := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERID', '');
+      cxTextEd_TargetPWD.Text    := ufDecrypt(ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'USERPWD', ''), _MY_KEY);
+      cxCmb_TargetDB.Text        := ufReadINI(getConfigPath + _INIVITAENV, lv_tmpSectionNm, 'DATABASE', '');
    end;
 end;
 

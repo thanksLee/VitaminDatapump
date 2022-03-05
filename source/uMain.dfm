@@ -3750,7 +3750,7 @@ object frmMain: TfrmMain
         object cxCmb_SourceDB: TcxComboBox
           Left = 73
           Top = 57
-          Properties.OnChange = cxCmb_SourceDBPropertiesChange
+          Properties.OnEditValueChanged = cxCmb_SourceDBPropertiesEditValueChanged
           TabOrder = 6
           Text = 'cxCmb_SourceDB'
           Width = 107
@@ -3803,7 +3803,7 @@ object frmMain: TfrmMain
           TabOrder = 10
         end
         object cxTextEd_SourceServiceNm: TcxTextEdit
-          Left = 368
+          Left = 371
           Top = 5
           TabOrder = 2
           Text = 'cxTextEd_SourceServiceNm'
@@ -3827,7 +3827,8 @@ object frmMain: TfrmMain
         Properties.Items.Strings = (
           'MySQL'
           'Oracle'
-          'SQL Server')
+          'SQL Server'
+          'Postgresql')
         Properties.OnEditValueChanged = cxCmb_SourceDBTypePropertiesEditValueChanged
         TabOrder = 1
         Width = 132
@@ -3842,7 +3843,7 @@ object frmMain: TfrmMain
       end
       object cxTextEd_SourceCurrentDBType: TcxTextEdit
         Left = 418
-        Top = 21
+        Top = 24
         TabOrder = 4
         Text = 'cxTextEd_SourceCurrentDBType'
         Visible = False
@@ -3850,7 +3851,7 @@ object frmMain: TfrmMain
       end
       object cxBtn_SourceDBConn: TcxButton
         Left = 330
-        Top = 18
+        Top = 19
         Width = 82
         Height = 25
         Action = act_SourceDBConn
@@ -4054,7 +4055,33 @@ object frmMain: TfrmMain
         'sql_param_cnt=0'
         
           '0001=ALTER SESSION SET NLS_TIMESTAMP_FORMAT='#39'YYYY-MM-DD HH24:MI:' +
-          'SS.FFX'#39)
+          'SS.FFX'#39
+        ''
+        '[PG - DATABASE LIST - 012]'
+        'sql_desc='#39'database '#47532#49828#53944#47484' '#44032#51256#50728#45796'.'#39
+        'sql_param_cnt=0'
+        '0001=select datname from pg_database'
+        ''
+        '[PG - DATABASE LIST - 013]'
+        'sql_desc='#39#47196#44536#51064' User'#51032' Table '#47785#47197#51012' '#44032#51256#50728#45796'.'#39
+        'sql_param_cnt=0'
+        '0001=select tablename from pg_tables'
+        '0002=where tableowner = :talbe_owner'
+        '0003=order by lower(tablename)'
+        ''
+        '[PG - TABLE COLUMN LIST - 014]'
+        'sql_desc='#39'Table Column List'#39
+        'sql_param_cnt=2'
+        '0001=SELECT COLUMN_NAME'
+        '0002=     , DATA_TYPE'
+        '0003=  FROM INFORMATION_SCHEMA.COLUMNS'
+        '0004= WHERE TABLE_CATALOG = :table_catalog'
+        '0005=   AND TABLE_NAME = :table_name'
+        ''
+        '[PG - TABLE COLUMN LIST - 015]'
+        'sql_desc='#39'Autocommit off'#39
+        'sql_param_cnt=0'
+        '0001=set AUTOCOMMIT off')
       FontSmoothing = fsmNone
     end
     object cxGrd_format: TcxGrid
@@ -4186,7 +4213,7 @@ object frmMain: TfrmMain
         object cxCmb_TargetDB: TcxComboBox
           Left = 73
           Top = 58
-          Properties.OnChange = cxCmb_TargetDBPropertiesChange
+          Properties.OnEditValueChanged = cxCmb_TargetDBPropertiesEditValueChanged
           TabOrder = 6
           Text = 'cxCmb_SourceDB'
           Width = 107
@@ -4254,7 +4281,8 @@ object frmMain: TfrmMain
         Properties.Items.Strings = (
           'MySQL'
           'Oracle'
-          'SQL Server')
+          'SQL Server'
+          'Postgresql')
         Properties.OnEditValueChanged = cxCmb_TargetDBTypePropertiesEditValueChanged
         TabOrder = 1
         Width = 132
@@ -4696,7 +4724,7 @@ object frmMain: TfrmMain
     Top = 266
   end
   object UniConn_Source: TUniConnection
-    ProviderName = 'Oracle'
+    AutoCommit = False
     Port = 1524
     LoginPrompt = False
     Left = 88
@@ -4745,5 +4773,9 @@ object frmMain: TfrmMain
     LoginPrompt = False
     Left = 776
     Top = 184
+  end
+  object PostgreSQLUniProvider1: TPostgreSQLUniProvider
+    Left = 64
+    Top = 496
   end
 end

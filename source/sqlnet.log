@@ -1,0 +1,76 @@
+
+
+***********************************************************************
+Fatal NI connect error 12545, connecting to:
+ (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=10.0.0.167)(CID=(PROGRAM=C:\Program?Files??x86?\Embarcadero\Studio\20.0\Bin\bds.exe)(HOST=DESKTOP-K1FNBVT)(USER=HMHome)))(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.0.167)(PORT=1621:nsfmsdb)))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 09-3월 -2020 18:52:44
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12545
+    TNS-12545: 대상 호스트 또는 개체가 존재하지 않아 연결에 실패했습니다
+    ns secondary err code: 12560
+    nt main err code: 515
+    TNS-00515: 대상 호스트 또는 개체가 존재하지 않아 연결에 실패했습니다
+    nt secondary err code: 1004
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12545, connecting to:
+ (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=10.0.0.167)(CID=(PROGRAM=C:\Program?Files??x86?\Embarcadero\Studio\20.0\Bin\bds.exe)(HOST=DESKTOP-K1FNBVT)(USER=HMHome)))(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.0.167)(PORT=1621:nsfmsdb)))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 09-3월 -2020 18:53:17
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12545
+    TNS-12545: 대상 호스트 또는 개체가 존재하지 않아 연결에 실패했습니다
+    ns secondary err code: 12560
+    nt main err code: 515
+    TNS-00515: 대상 호스트 또는 개체가 존재하지 않아 연결에 실패했습니다
+    nt secondary err code: 1004
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12545, connecting to:
+ (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=10.0.0.167)(CID=(PROGRAM=C:\Program?Files??x86?\Embarcadero\Studio\20.0\Bin\bds.exe)(HOST=DESKTOP-K1FNBVT)(USER=HMHome)))(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.0.167)(PORT=1621:nsfmsdb)))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 09-3월 -2020 18:53:22
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12545
+    TNS-12545: 대상 호스트 또는 개체가 존재하지 않아 연결에 실패했습니다
+    ns secondary err code: 12560
+    nt main err code: 515
+    TNS-00515: 대상 호스트 또는 개체가 존재하지 않아 연결에 실패했습니다
+    nt secondary err code: 1004
+    nt OS err code: 0
+
+
+***********************************************************************
+Fatal NI connect error 12545, connecting to:
+ (DESCRIPTION=(CONNECT_DATA=(SERVICE_NAME=10.0.0.167)(CID=(PROGRAM=C:\Program?Files??x86?\Embarcadero\Studio\20.0\Bin\bds.exe)(HOST=DESKTOP-K1FNBVT)(USER=HMHome)))(ADDRESS=(PROTOCOL=TCP)(HOST=10.0.0.167)(PORT=1621:nsfmsdb)))
+
+  VERSION INFORMATION:
+	TNS for 32-bit Windows: Version 10.2.0.3.0 - Production
+	Windows NT TCP/IP NT Protocol Adapter for 32-bit Windows: Version 10.2.0.3.0 - Production
+  Time: 09-3월 -2020 18:53:27
+  Tracing not turned on.
+  Tns error struct:
+    ns main err code: 12545
+    TNS-12545: 대상 호스트 또는 개체가 존재하지 않아 연결에 실패했습니다
+    ns secondary err code: 12560
+    nt main err code: 515
+    TNS-00515: 대상 호스트 또는 개체가 존재하지 않아 연결에 실패했습니다
+    nt secondary err code: 1004
+    nt OS err code: 0

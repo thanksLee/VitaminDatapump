@@ -1181,17 +1181,16 @@ begin
              Columns[lv_LoopCnt].PropertiesClass := TcxImageProperties;
              TcxImageProperties(Columns[lv_LoopCnt]).GraphicClass := TcxBitmap;
              //TcxImageProperties(Columns[lv_LoopCnt]).GraphicClassName :=
-           end else if Columns[lv_LoopCnt].DataBinding.Field.DataType in [ftBytes, ftByte, ftVarBytes, ftVariant] then
+           end else if pi_objGridTableView.Columns[lv_LoopCnt].DataBinding.Field.DataType in [ftBytes, ftByte, ftVarBytes, ftVariant] then
            begin
              Columns[lv_LoopCnt].PropertiesClass := TcxMemoProperties;
              Columns[lv_LoopCnt].OnGetDataText := cxGrd_formatDBTableView1Column1GetDataText;
              { -- DataTime 표시 -- }
-           end else if Columns[lv_LoopCnt].DataBinding.Field.DataType in [ftDateTime] then
+           end else if pi_objGridTableView.Columns[lv_LoopCnt].DataBinding.Field.DataType in [ftDateTime] then
            begin
              Columns[lv_LoopCnt].OnGetDataText := cxGrd_formatDBTableView1Column3GetDataText;
              { -- Timestamp 표시 -- }
-           end else if Columns[lv_LoopCnt].DataBinding.Field.DataType in
-             [ftTimeStamp] then
+           end else if pi_objGridTableView.Columns[lv_LoopCnt].DataBinding.Field.DataType in [ftTimeStamp] then
            begin
              Columns[lv_LoopCnt].OnGetDataText := cxGrd_formatDBTableView1Column4GetDataText;
            end;

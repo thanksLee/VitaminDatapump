@@ -418,7 +418,8 @@ begin
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsBytes := pi_ObjSQry.Fields[lv_ColLoopCnt].AsBytes;
                   end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftInteger) or
-                              (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftSmallint)
+                              (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftSmallint) or
+                              (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftLargeint)
                   then
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsInteger := pi_ObjSQry.Fields[lv_ColLoopCnt].AsInteger;
@@ -426,6 +427,9 @@ begin
 //                  then
 //                  begin
 //                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsWideString := pi_ObjSQry.Fields[lv_ColLoopCnt].AsWideString;
+                  end else if (pi_ObjSQry.Fields[lv_ColLoopCnt].DataType = ftBoolean) then
+                  begin
+                     lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsBoolean := pi_ObjSQry.Fields[lv_ColLoopCnt].AsBoolean;
                   end else
                   begin
                      lv_UniQry.Params[lv_ColLoopCnt][lv_LoopCnt].AsString := pi_ObjSQry.Fields[lv_ColLoopCnt].AsString;
@@ -576,6 +580,8 @@ begin
             lv_ColLst_1 := lv_ColLst_1 + lv_tmpColNm + ', ';
 
             if (LowerCase(lv_tmpColType) = 'timestamp') or
+               (LowerCase(lv_tmpColType) = 'timestamp without time zone') or
+
                (LowerCase(lv_tmpColType) = 'datetime') or
                (LowerCase(lv_tmpColType) = 'date') or
                (LowerCase(lv_tmpColType) = 'time') then
@@ -585,7 +591,13 @@ begin
 //                  1 : lv_tmpColNm := 'to_date(:' + lv_tmpColNm + ', ''yyyy-mm-dd hh24:mi:ss'')';  // Oracle
 //               end;
 
-               lv_tmpColNm := ':' + lv_tmpColNm;
+               if ((pi_Flg = 3) and (LowerCase(lv_tmpColType) = 'timestamp without time zone')) then
+               begin
+                  lv_tmpColNm := 'to_timestamp(:' + lv_tmpColNm + ', ''yyyy-mm-dd hh24:mi:ss.us'')';
+               end else
+               begin
+                  lv_tmpColNm := ':' + lv_tmpColNm;
+               end;
             end else
             begin
                lv_tmpColNm := ':' + lv_tmpColNm;

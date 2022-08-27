@@ -4065,9 +4065,11 @@ object frmMain: TfrmMain
         '[PG - DATABASE LIST - 013]'
         'sql_desc='#39#47196#44536#51064' User'#51032' Table '#47785#47197#51012' '#44032#51256#50728#45796'.'#39
         'sql_param_cnt=0'
-        '0001=select tablename from pg_tables'
-        '0002=where tableowner = :talbe_owner'
-        '0003=order by lower(tablename)'
+        
+          '0001=select concat(schemaname, '#39'.'#39', tablename) as tablename from' +
+          ' pg_tables'
+        '0002=where tableowner = :table_owner'
+        '0003=order by lower(concat(schemaname, '#39'.'#39', tablename))'
         ''
         '[PG - TABLE COLUMN LIST - 014]'
         'sql_desc='#39'Table Column List'#39
@@ -4076,7 +4078,7 @@ object frmMain: TfrmMain
         '0002=     , DATA_TYPE'
         '0003=  FROM INFORMATION_SCHEMA.COLUMNS'
         '0004= WHERE TABLE_CATALOG = :table_catalog'
-        '0005=   AND TABLE_NAME = :table_name'
+        '0005=   AND concat(table_schema, '#39'.'#39', table_name) = :table_name'
         ''
         '[PG - TABLE COLUMN LIST - 015]'
         'sql_desc='#39'Autocommit off'#39

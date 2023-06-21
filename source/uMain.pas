@@ -635,6 +635,7 @@ begin
                end;
             3 :
                begin
+                  SpecificOptions.Values['Charset'] := pi_DBCharSet;
                   Database := pi_DB;
                end;
          end;

@@ -3954,7 +3954,7 @@ object frmMain: TfrmMain
     end
     object SynEd_DBSQL: TSynEdit
       Left = 197
-      Top = 199
+      Top = 197
       Width = 324
       Height = 150
       Font.Charset = DEFAULT_CHARSET
@@ -4079,6 +4079,7 @@ object frmMain: TfrmMain
         '0003=  FROM INFORMATION_SCHEMA.COLUMNS'
         '0004= WHERE TABLE_CATALOG = :table_catalog'
         '0005=   AND concat(table_schema, '#39'.'#39', table_name) = :table_name'
+        '0006= order by ordinal_position'
         ''
         '[PG - TABLE COLUMN LIST - 015]'
         'sql_desc='#39'Autocommit off'#39

@@ -110,3 +110,20 @@ SELECT COLUMN_NAME
   FROM ALL_TAB_COLUMNS
  WHERE OWNER = ''
    AND TABLE_NAME = ''
+
+
+SELECT table_name
+     , COLUMN_NAME
+     , DATA_TYPE
+     , TABLE_CATALOG
+  FROM INFORMATION_SCHEMA.COLUMNS
+ WHERE TABLE_CATALOG = :table_catalog
+   AND concat(table_schema, '.', table_name) = :table_name
+
+
+
+ SELECT *
+  FROM INFORMATION_SCHEMA.COLUMNS
+ WHERE TABLE_CATALOG = 'postgres'
+   AND concat(table_schema, '.', table_name) = 'public.movies'
+  order by ordinal_position

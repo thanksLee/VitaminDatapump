@@ -636,6 +636,7 @@ begin
             3 :
                begin
                   SpecificOptions.Values['Charset'] := pi_DBCharSet;
+                  SpecificOptions.Values['UseUnicode'] := 'True';
                   Database := pi_DB;
                end;
          end;
